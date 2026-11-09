@@ -1,5 +1,9 @@
 # WPF Gallery
 
+A parallel, packaged WinUI 3 migration is available in
+[`..\WinUIGallery`](../WinUIGallery/README.md). The WPF implementation is retained
+here for comparison.
+
 This application showcases the new Fluent theme styles being introduced in WPF in .NET 9 Preview 4.
 
 ![WPF Gallery Landing Page](Assets/README_Images/WPFGalleryLanding.png)

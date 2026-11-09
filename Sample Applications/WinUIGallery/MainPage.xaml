@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="WPFGallery.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <NavigationView x:Name="Navigation" AutomationProperties.AutomationId="GalleryNavigation"
+                    IsBackButtonVisible="Visible" IsBackEnabled="False"
+                    PaneDisplayMode="Auto" OpenPaneLength="280"
+                    IsSettingsVisible="True" SelectionChanged="Navigation_SelectionChanged"
+                    BackRequested="Navigation_BackRequested">
+        <NavigationView.AutoSuggestBox>
+            <AutoSuggestBox x:Name="Search" PlaceholderText="Search controls and samples"
+                            AutomationProperties.Name="Search controls and samples"
+                            AutomationProperties.AutomationId="GallerySearch"
+                            TextChanged="Search_TextChanged" QuerySubmitted="Search_QuerySubmitted" />
+        </NavigationView.AutoSuggestBox>
+        <Frame x:Name="ContentFrame" Navigated="ContentFrame_Navigated" />
+    </NavigationView>
+</Page>
