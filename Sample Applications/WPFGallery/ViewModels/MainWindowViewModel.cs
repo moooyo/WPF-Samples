@@ -1,6 +1,4 @@
 using System.ComponentModel;
-using System.Windows.Controls.Primitives;
-using System.Windows.Threading;
 using WPFGallery.Navigation;
 using WPFGallery.Views;
 using WPFGallery.Models;
@@ -10,19 +8,19 @@ namespace WPFGallery.ViewModels;
 public partial class MainWindowViewModel : ObservableObject
 {
     [ObservableProperty]
-    private string _applicationTitle = "WPF Gallery";
+    public partial string ApplicationTitle { get; set; } = "WPF Gallery";
 
     private readonly DispatcherTimer _timer;
 
     private string _searchText = string.Empty;
 
     [ObservableProperty]
-    private ICollection<ControlInfoDataItem> _controls;
+    public partial ICollection<ControlInfoDataItem> Controls { get; set; }
     [ObservableProperty]
-    private ControlInfoDataItem? _selectedControl;
+    public partial ControlInfoDataItem? SelectedControl { get; set; }
     private readonly INavigationService _navigationService;
     [ObservableProperty]
-    private bool _canNavigateback;
+    public partial bool CanNavigateback { get; set; }
 
     [RelayCommand]
     public void Settings()
@@ -44,7 +42,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     public MainWindowViewModel(INavigationService navigationService)
     {
-        _controls = ControlsInfoDataSource.Instance.ControlsInfo;
+        Controls = ControlsInfoDataSource.Instance.ControlsInfo;
         _navigationService = navigationService;
 
         _timer = new DispatcherTimer();
@@ -59,7 +57,7 @@ public partial class MainWindowViewModel : ObservableObject
         _timer.Start();
     }
 
-    private void PerformSearchNavigation(object? sender, EventArgs e)
+    private void PerformSearchNavigation(object? sender, object e)
     {
         _timer.Stop();
         if (string.IsNullOrWhiteSpace(_searchText))
@@ -67,19 +65,19 @@ public partial class MainWindowViewModel : ObservableObject
             return;
         }
 
-        _navigationService.NavigateTo(GetNavigationPageTypeFromName(_searchText, _controls));
+        _navigationService.NavigateTo(GetNavigationPageTypeFromName(_searchText, Controls));
     }
 
     private Type? GetNavigationPageTypeFromName(string name, ICollection<ControlInfoDataItem> pages)
     {
         Type? type = null;
 
-        if(pages == null)
+        if (pages == null)
         {
             return null;
         }
 
-        foreach(var item in pages)
+        foreach (var item in pages)
         {
             if (item.Title.Equals(name, StringComparison.OrdinalIgnoreCase))
             {
@@ -88,7 +86,7 @@ public partial class MainWindowViewModel : ObservableObject
 
             type = GetNavigationPageTypeFromName(name, item.Items);
 
-            if(type != null)
+            if (type != null)
             {
                 return type;
             }
@@ -101,31 +99,31 @@ public partial class MainWindowViewModel : ObservableObject
         List<ControlInfoDataItem> list = new List<ControlInfoDataItem>();
         Stack<ControlInfoDataItem> _stack = new Stack<ControlInfoDataItem>();
         Stack<ControlInfoDataItem> _revStack = new Stack<ControlInfoDataItem>();
-        
-        if(pageType == null)
+
+        if (pageType == null)
         {
             return list;
         }
 
         bool found = false;
 
-        foreach(var item in Controls)
+        foreach (var item in Controls)
         {
             _stack.Push(item);
             found = FindNavigationItemsHierarchyFromPageType(pageType, item.Items, ref _stack);
-            if(found)
+            if (found)
             {
                 break;
             }
             _stack.Pop();
         }
 
-        while(_stack.Count > 0)
+        while (_stack.Count > 0)
         {
             _revStack.Push(_stack.Pop());
         }
 
-        foreach(var item in _revStack)
+        foreach (var item in _revStack)
         {
             list.Add(item);
         }
@@ -138,16 +136,16 @@ public partial class MainWindowViewModel : ObservableObject
         var item = stack.Peek();
         bool found = false;
 
-        if(pageType == item.PageType)
+        if (pageType == item.PageType)
         {
             return true;
         }
 
-        foreach(var child in item.Items)
+        foreach (var child in item.Items)
         {
             stack.Push(child);
             found = FindNavigationItemsHierarchyFromPageType(pageType, child.Items, ref stack);
-            if(found) { return true; }
+            if (found) { return true; }
             stack.Pop();
         }
 
@@ -156,7 +154,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     internal void UpdateCanNavigateBack()
     {
-        CanNavigateback = _navigationService.IsBackHistoryNonEmpty();  
+        CanNavigateback = _navigationService.IsBackHistoryNonEmpty();
     }
 
 }

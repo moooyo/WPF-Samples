@@ -1,13 +1,13 @@
 ﻿
 namespace WPFGallery.ViewModels
 {
-    public partial class TextBlockPageViewModel : ObservableObject 
-{
-	[ObservableProperty]
-	private string _pageTitle = "TextBlock";
+    public partial class TextBlockPageViewModel : ObservableObject
+    {
+        [ObservableProperty]
+        public partial string PageTitle { get; set; } = "TextBlock";
 
-	[ObservableProperty]
-	private string _pageDescription = "";
+        [ObservableProperty]
+        public partial string PageDescription { get; set; } = "";
 
     }
 }

@@ -11,12 +11,12 @@ namespace WPFGallery.Models
 {
     public class ControlInfoDataItem
     {
-        public string UniqueId { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string IconGlyph { get; set; }
-        public string ImagePath { get; set; }
-        public string PageName { get; set; }
+        public required string UniqueId { get; set; }
+        public required string Title { get; set; }
+        public string? Description { get; set; }
+        public string? IconGlyph { get; set; }
+        public string? ImagePath { get; set; }
+        public required string PageName { get; set; }
         public bool IsGroup { get; set; } = false;
         public bool IsNew { get; set; } = false;
         public bool IsUpdated { get; set; } = false;
@@ -25,17 +25,21 @@ namespace WPFGallery.Models
         {
             get
             {
-                return _assembly.GetType($"WPFGallery.Views.{PageName}");
+                return _assembly.GetType($"WPFGallery.Views.{PageName}")
+                    ?? throw new InvalidOperationException($"The Gallery page '{PageName}' does not exist.");
             }
         }
 
-        public Uri ImageSource 
+        public Uri? ImageSource
         {
             get
             {
-                return new Uri($"pack://application:,,,/{ImagePath}");
+                return ImagePath is null ? null : new Uri($"ms-appx:///{ImagePath.TrimStart('/')}");
             }
+
         }
+
+        public string? ImageUri => ImageSource?.AbsoluteUri;
 
         public ObservableCollection<ControlInfoDataItem> Items { get; set; } = new ObservableCollection<ControlInfoDataItem>();
 
@@ -71,7 +75,8 @@ namespace WPFGallery.Models
         private ControlsInfoDataSource()
         {
             var jsonText = ReadControlsData();
-            ControlsInfo = JsonSerializer.Deserialize<List<ControlInfoDataItem>>(jsonText);
+            ControlsInfo = JsonSerializer.Deserialize<List<ControlInfoDataItem>>(jsonText)
+                ?? throw new InvalidDataException("The Gallery page catalog is empty.");
         }
 
         #endregion
@@ -83,7 +88,8 @@ namespace WPFGallery.Models
             var assembly = typeof(ControlsInfoDataSource).Assembly;
             var resourceName = "WPFGallery.Models.ControlsInfoData.json";
 
-            using (var stream = assembly.GetManifestResourceStream(resourceName))
+            using (var stream = assembly.GetManifestResourceStream(resourceName)
+                ?? throw new InvalidOperationException($"Missing embedded resource: {resourceName}"))
             using (var reader = new System.IO.StreamReader(stream))
             {
                 return reader.ReadToEnd();
@@ -92,7 +98,8 @@ namespace WPFGallery.Models
 
         public ICollection<ControlInfoDataItem> GetControlsInfo(string groupName)
         {
-            return ControlsInfo.Where(x => x.UniqueId == groupName).FirstOrDefault()?.Items;
+            return ControlsInfo.FirstOrDefault(x => x.UniqueId == groupName)?.Items
+                ?? throw new ArgumentException($"Unknown Gallery group: {groupName}", nameof(groupName));
         }
 
         public ICollection<ControlInfoDataItem> GetAllControlsInfo()
@@ -100,7 +107,7 @@ namespace WPFGallery.Models
             ICollection<ControlInfoDataItem> allControls = new ObservableCollection<ControlInfoDataItem>();
             foreach (ControlInfoDataItem ci in ControlsInfo)
             {
-                if(ci.UniqueId != "Samples")
+                if (ci.UniqueId != "Samples")
                 {
                     var items = ci.Items;
                     foreach (ControlInfoDataItem item in items)
@@ -123,13 +130,13 @@ namespace WPFGallery.Models
             ICollection<ControlInfoDataItem> recentlyAddedOrUpdatedSamples = new ObservableCollection<ControlInfoDataItem>();
             foreach (ControlInfoDataItem ci in ControlsInfo)
             {
-                if(ci.IsNew || ci.IsUpdated)
+                if (ci.IsNew || ci.IsUpdated)
                     recentlyAddedOrUpdatedSamples.Add(ci);
 
                 var items = ci.Items;
                 foreach (ControlInfoDataItem item in items)
                 {
-                    if(item.IsNew || item.IsUpdated)
+                    if (item.IsNew || item.IsUpdated)
                         recentlyAddedOrUpdatedSamples.Add(item);
                 }
             }

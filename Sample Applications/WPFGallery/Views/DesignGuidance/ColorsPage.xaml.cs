@@ -1,6 +1,3 @@
-using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using WPFGallery.ViewModels;
 
 namespace WPFGallery.Views
@@ -11,6 +8,8 @@ namespace WPFGallery.Views
     public partial class ColorsPage : Page
     {
         public ColorsPageViewModel ViewModel { get; }
+        public ColorsPage() : this(App.Services.GetRequiredService<ColorsPageViewModel>()) { }
+
         public ColorsPage(ColorsPageViewModel viewModel)
         {
             InitializeComponent();
@@ -23,22 +22,22 @@ namespace WPFGallery.Views
             switch (PageSelector.SelectedIndex)
             {
                 case 0:
-                    ColorSubpageNavigationFrame.Navigate(new TextSection());
+                    ColorSubpageNavigationFrame.Navigate(typeof(TextSection));
                     break;
                 case 1:
-                    ColorSubpageNavigationFrame.Navigate(new FillSection());
+                    ColorSubpageNavigationFrame.Navigate(typeof(FillSection));
                     break;
                 case 2:
-                    ColorSubpageNavigationFrame.Navigate(new StrokeSection());
+                    ColorSubpageNavigationFrame.Navigate(typeof(StrokeSection));
                     break;
                 case 3:
-                    ColorSubpageNavigationFrame.Navigate(new BackgroundSection());
+                    ColorSubpageNavigationFrame.Navigate(typeof(BackgroundSection));
                     break;
                 case 4:
-                    ColorSubpageNavigationFrame.Navigate(new SignalSection());
+                    ColorSubpageNavigationFrame.Navigate(typeof(SignalSection));
                     break;
                 case 5:
-                    ColorSubpageNavigationFrame.Navigate(new HighContrastSection());
+                    ColorSubpageNavigationFrame.Navigate(typeof(HighContrastSection));
                     break;
             }
         }

@@ -1,13 +1,13 @@
 
 namespace WPFGallery.ViewModels.Layout;
 
-public partial class StackPanelPageViewModel : ObservableObject 
+public partial class StackPanelPageViewModel : ObservableObject
 {
     [ObservableProperty]
-    private string _pageTitle = "StackPanel";
+    public partial string PageTitle { get; set; } = "StackPanel";
 
     [ObservableProperty]
-    private string _pageDescription = "";
+    public partial string PageDescription { get; set; } = "";
 
     public StackPanelPageViewModel() { }
 }

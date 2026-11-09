@@ -5,9 +5,9 @@ namespace WPFGallery.ViewModels
     public partial class GeometryPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "Geometry";
+        public partial string PageTitle { get; set; } = "Geometry";
 
         [ObservableProperty]
-        private string _pageDescription = "";
+        public partial string PageDescription { get; set; } = "";
     }
 }

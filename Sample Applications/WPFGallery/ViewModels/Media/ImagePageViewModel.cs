@@ -1,13 +1,13 @@
 
 namespace WPFGallery.ViewModels;
 
-public partial class ImagePageViewModel : ObservableObject 
+public partial class ImagePageViewModel : ObservableObject
 {
-	[ObservableProperty]
-	private string _pageTitle = "Image";
+    [ObservableProperty]
+    public partial string PageTitle { get; set; } = "Image";
 
-	[ObservableProperty]
-	private string _pageDescription = "";
+    [ObservableProperty]
+    public partial string PageDescription { get; set; } = "";
 
 
 }

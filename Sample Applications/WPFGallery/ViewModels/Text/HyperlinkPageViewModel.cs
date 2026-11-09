@@ -7,10 +7,10 @@ namespace WPFGallery.ViewModels
     public partial class HyperlinkPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "Hyperlink";
+        public partial string PageTitle { get; set; } = "Hyperlink";
 
         [ObservableProperty]
-        private string _pageDescription = "";
+        public partial string PageDescription { get; set; } = "";
 
         public HyperlinkPageViewModel() { }
     }

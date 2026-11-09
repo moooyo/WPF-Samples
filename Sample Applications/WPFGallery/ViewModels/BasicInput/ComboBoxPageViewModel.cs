@@ -5,16 +5,16 @@
 
 namespace WPFGallery.ViewModels;
 
-public partial class ComboBoxPageViewModel : ObservableObject 
+public partial class ComboBoxPageViewModel : ObservableObject
 {
-	[ObservableProperty]
-	private string _pageTitle = "ComboBox";
-
-	[ObservableProperty]
-	private string _pageDescription = "";
+    [ObservableProperty]
+    public partial string PageTitle { get; set; } = "ComboBox";
 
     [ObservableProperty]
-    private IList<string> _comboBoxFontFamilies = new ObservableCollection<string>
+    public partial string PageDescription { get; set; } = "";
+
+    [ObservableProperty]
+    public partial IList<string> ComboBoxFontFamilies { get; set; } = new ObservableCollection<string>
     {
         "Arial",
         "Comic Sans MS",
@@ -23,7 +23,7 @@ public partial class ComboBoxPageViewModel : ObservableObject
     };
 
     [ObservableProperty]
-    private IList<int> _comboBoxFontSizes = new ObservableCollection<int>
+    public partial IList<int> ComboBoxFontSizes { get; set; } = new ObservableCollection<int>
     {
         8,
         9,

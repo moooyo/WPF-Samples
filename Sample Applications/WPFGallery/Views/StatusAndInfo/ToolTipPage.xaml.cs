@@ -1,6 +1,3 @@
-﻿using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using WPFGallery.ViewModels;
 
@@ -12,14 +9,16 @@ namespace WPFGallery.Views
     /// </summary>
     public partial class ToolTipPage : Page
     {
-    public ToolTipPageViewModel ViewModel { get; }
+        public ToolTipPageViewModel ViewModel { get; }
 
-    public ToolTipPage(ToolTipPageViewModel viewModel)
-    {
-        ViewModel = viewModel;
-        DataContext = this;
+        public ToolTipPage() : this(App.Services.GetRequiredService<ToolTipPageViewModel>()) { }
 
-        InitializeComponent();
-    }
+        public ToolTipPage(ToolTipPageViewModel viewModel)
+        {
+            ViewModel = viewModel;
+            DataContext = this;
+
+            InitializeComponent();
+        }
     }
 }

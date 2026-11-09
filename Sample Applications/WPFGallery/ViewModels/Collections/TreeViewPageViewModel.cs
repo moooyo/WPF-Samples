@@ -1,13 +1,13 @@
 
 namespace WPFGallery.ViewModels;
 
-public partial class TreeViewPageViewModel : ObservableObject 
+public partial class TreeViewPageViewModel : ObservableObject
 {
-	[ObservableProperty]
-	private string _pageTitle = "TreeView";
+    [ObservableProperty]
+    public partial string PageTitle { get; set; } = "TreeView";
 
-	[ObservableProperty]
-	private string _pageDescription = "";
+    [ObservableProperty]
+    public partial string PageDescription { get; set; } = "";
 
 
 }

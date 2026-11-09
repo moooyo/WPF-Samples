@@ -1,6 +1,3 @@
-﻿using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using WPFGallery.ViewModels;
 
 namespace WPFGallery.Views
@@ -10,8 +7,10 @@ namespace WPFGallery.Views
     /// </summary>
     public partial class DateAndTimePage : Page
     {
-        public DateAndTimePageViewModel ViewModel { get; } 
-		public DateAndTimePage(DateAndTimePageViewModel viewModel)
+        public DateAndTimePageViewModel ViewModel { get; }
+        public DateAndTimePage() : this(App.Services.GetRequiredService<DateAndTimePageViewModel>()) { }
+
+        public DateAndTimePage(DateAndTimePageViewModel viewModel)
         {
             InitializeComponent();
             ViewModel = viewModel;

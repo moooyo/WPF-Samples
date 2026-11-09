@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace WPFGallery.ViewModels.Layout
 {
-    public partial class GridSplitterPageViewModel  : ObservableObject
+    public partial class GridSplitterPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "GridSplitter";
+        public partial string PageTitle { get; set; } = "GridSplitter";
 
         [ObservableProperty]
-        private string _pageDescription = "";
+        public partial string PageDescription { get; set; } = "";
 
         public GridSplitterPageViewModel() { }
     }

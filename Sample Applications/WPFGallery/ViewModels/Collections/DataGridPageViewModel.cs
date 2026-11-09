@@ -7,20 +7,44 @@ using WPFGallery.Models;
 
 namespace WPFGallery.ViewModels;
 
-public partial class DataGridPageViewModel : ObservableObject 
+public partial class DataGridPageViewModel : ObservableObject
 {
-	[ObservableProperty]
-	private string _pageTitle = "DataGrid";
-
-	[ObservableProperty]
-	private string _pageDescription = "";
+    [ObservableProperty]
+    public partial string PageTitle { get; set; } = "DataGrid";
 
     [ObservableProperty]
-    private ObservableCollection<Product> _productsCollection;
+    public partial string PageDescription { get; set; } = "";
+
+    [ObservableProperty]
+    public partial ObservableCollection<Product> ProductsCollection { get; set; }
 
     public DataGridPageViewModel()
     {
-        _productsCollection = GenerateProducts();
+        ProductsCollection = GenerateProducts();
+    }
+
+    private string? _sortColumn;
+    private bool _descending;
+
+    [RelayCommand]
+    private void Sort(string column)
+    {
+        _descending = _sortColumn == column && !_descending;
+        _sortColumn = column;
+        Func<Product, IComparable> key = column switch
+        {
+            nameof(Product.ProductId) => product => product.ProductId,
+            nameof(Product.ProductCode) => product => product.ProductCode,
+            nameof(Product.ProductName) => product => product.ProductName,
+            nameof(Product.QuantityPerUnit) => product => product.QuantityPerUnit,
+            nameof(Product.UnitPrice) => product => product.UnitPrice,
+            nameof(Product.UnitsInStock) => product => product.UnitsInStock,
+            _ => throw new ArgumentOutOfRangeException(nameof(column))
+        };
+        var sorted = (_descending
+            ? ProductsCollection.OrderByDescending(key) : ProductsCollection.OrderBy(key)).ToArray();
+        ProductsCollection.Clear();
+        foreach (var product in sorted) ProductsCollection.Add(product);
     }
 
     private ObservableCollection<Product> GenerateProducts()
@@ -52,5 +76,5 @@ public partial class DataGridPageViewModel : ObservableObject
         }
 
         return products;
-    }    
+    }
 }

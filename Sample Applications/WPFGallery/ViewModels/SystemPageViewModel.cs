@@ -7,13 +7,13 @@ namespace WPFGallery.ViewModels
     public partial class SystemPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "System";
+        public partial string PageTitle { get; set; } = "System";
 
         [ObservableProperty]
-        private string _pageDescription = "System-level controls and dialogs";
+        public partial string PageDescription { get; set; } = "System-level controls and dialogs";
 
         [ObservableProperty]
-        private ICollection<ControlInfoDataItem> _navigationCards = ControlsInfoDataSource.Instance.GetControlsInfo("System");
+        public partial ICollection<ControlInfoDataItem> NavigationCards { get; set; } = ControlsInfoDataSource.Instance.GetControlsInfo("System");
 
         private readonly INavigationService _navigationService;
 
@@ -23,13 +23,14 @@ namespace WPFGallery.ViewModels
         }
 
         [RelayCommand]
-        public void Navigate(object pageType){
+        public void Navigate(object pageType)
+        {
             if (pageType is Type page)
             {
                 _navigationService.NavigateTo(page);
             }
         }
 
-        
+
     }
 }

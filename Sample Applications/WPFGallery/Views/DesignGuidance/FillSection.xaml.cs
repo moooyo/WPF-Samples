@@ -1,6 +1,3 @@
-﻿using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace WPFGallery.Views
 {

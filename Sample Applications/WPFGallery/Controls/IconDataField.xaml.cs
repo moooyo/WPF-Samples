@@ -1,5 +1,3 @@
-﻿using System.Windows.Automation;
-using System.Windows.Automation.Peers;
 
 namespace WPFGallery.Controls
 {
@@ -36,7 +34,7 @@ namespace WPFGallery.Controls
         public static readonly DependencyProperty LabelProperty =
             DependencyProperty.Register(nameof(Label), typeof(string), typeof(IconDataField), new PropertyMetadata(string.Empty));
 
-        private void CopyButton_Click(object sender, RoutedEventArgs e)
+        private async void CopyButton_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(Value))
             {
@@ -45,18 +43,22 @@ namespace WPFGallery.Controls
 
             try
             {
-                Clipboard.SetText(Value);
-                AutomationPeer peer = UIElementAutomationPeer.CreatePeerForElement(this);
+                App.Services.GetRequiredService<Services.IClipboardService>().CopyText(Value);
+                CopyIcon.Symbol = Symbol.Accept;
+                AutomationPeer peer = FrameworkElementAutomationPeer.CreatePeerForElement(this);
                 peer?.RaiseNotificationEvent(
                     AutomationNotificationKind.Other,
                     AutomationNotificationProcessing.ImportantMostRecent,
                     $"{Label} Copied",
                     "ButtonClickedActivity"
                 );
+                await Task.Delay(2000);
+                CopyIcon.Symbol = Symbol.Copy;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error copying to clipboard: " + ex.Message);
+                await App.Services.GetRequiredService<Services.IDialogService>().ShowAsync(XamlRoot,
+                    "Error copying to clipboard: " + ex.Message, "Clipboard error", image: Services.DialogImage.Error);
             }
         }
     }

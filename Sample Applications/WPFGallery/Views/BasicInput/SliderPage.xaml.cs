@@ -1,6 +1,3 @@
-﻿using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using WPFGallery.ViewModels;
 
@@ -12,6 +9,8 @@ namespace WPFGallery.Views
     public partial class SliderPage : Page
     {
         public SliderPageViewModel ViewModel { get; }
+
+        public SliderPage() : this(App.Services.GetRequiredService<SliderPageViewModel>()) { }
 
         public SliderPage(SliderPageViewModel viewModel)
         {

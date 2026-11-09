@@ -6,12 +6,31 @@ namespace WPFGallery.ViewModels
     public partial class TextBoxPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "TextBox";
+        public partial string PageTitle { get; set; } = "TextBox";
 
         [ObservableProperty]
-        private string _pageDescription = "";
+        public partial string PageDescription { get; set; } = "";
 
         [ObservableProperty]
-        private string _validatedText = string.Empty;
+        public partial string ValidatedText { get; set; } = string.Empty;
+
+        [ObservableProperty]
+        public partial string InputText { get; set; } = string.Empty;
+
+        [ObservableProperty]
+        public partial string ValidationError { get; set; } = string.Empty;
+
+        partial void OnInputTextChanged(string value)
+        {
+            if (Helpers.AlphabeticValidationRule.IsValid(value))
+            {
+                ValidatedText = value;
+                ValidationError = string.Empty;
+            }
+            else
+            {
+                ValidationError = "Only English alphabetic characters (a-z, A-Z) are allowed.";
+            }
+        }
     }
 }

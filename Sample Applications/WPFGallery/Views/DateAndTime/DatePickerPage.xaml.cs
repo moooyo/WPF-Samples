@@ -1,16 +1,16 @@
-﻿using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using WPFGallery.ViewModels;
 
 namespace WPFGallery.Views;
-    /// <summary>
-    /// Interaction logic for DatePickerPage.xaml
-    /// </summary>
-    public partial class DatePickerPage : Page
-    {
+
+/// <summary>
+/// Interaction logic for DatePickerPage.xaml
+/// </summary>
+public partial class DatePickerPage : Page
+{
     public DatePickerPageViewModel ViewModel { get; }
+
+    public DatePickerPage() : this(App.Services.GetRequiredService<DatePickerPageViewModel>()) { }
 
     public DatePickerPage(DatePickerPageViewModel viewModel)
     {
@@ -19,4 +19,4 @@ namespace WPFGallery.Views;
 
         InitializeComponent();
     }
-    }
+}

@@ -1,30 +1,29 @@
 ﻿<Page x:Class="WPFGallery.Views.NavigationWindowPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:WPFGallery.Views"
-      xmlns:controls="clr-namespace:WPFGallery.Controls"
-      mc:Ignorable="d" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:WPFGallery.Views"
+      xmlns:controls="using:WPFGallery.Controls"
+      mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="NavigationWindowPage"
-      Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+      Foreground="{ThemeResource TextFillColorPrimaryBrush}">
 
     <Grid>
-        <Grid x:Name="ContentPagePane" Height="Auto">
+        <Grid x:Name="ContentPagePane">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <controls:PageHeader Margin="0,0,0,32" Title="{Binding ViewModel.PageTitle}" ShowDescription="False" />
+            <controls:PageHeader Margin="0,0,0,32" Title="{x:Bind ViewModel.PageTitle, Mode=OneWay}" ShowDescription="False" />
             <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
                 <StackPanel Margin="0,0,0,24">
                     <controls:ControlExample
                         Margin="10"
                         HeaderText="A Navigation Window"
-                        XamlCode="&lt;NavigationWindow&#x0a;    Width=&quot;800&quot;&#x0a;    Height=&quot;450&quot;&#x0a;    Source=&quot;/Views/Navigation/Page1.xaml&quot; /&gt;"
-                        CSharpCode="private void OpenNavigationWindow_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    NavigationWindow window = new NavigationWindow()&#x0a;    {&#x0a;        Width = 800,&#x0a;        Height = 450,&#x0a;        Source = new Uri(&quot;/Views/Navigation/Page1.xaml&quot;, UriKind.Relative)&#x0a;    };&#x0a;    window.Show();&#x0a;}">
-                        <Button 
+                    XamlCode="&lt;Button AutomationProperties.AutomationId=&quot;OpenNavigationWindow&quot; &#10;    x:Name=&quot;OpenNavigationWindow&quot;&#10;    VerticalAlignment=&quot;Center&quot;&#10;    HorizontalAlignment=&quot;Center&quot;&#10;    Content=&quot;Open window to view NavigationWindow&quot;&#10;    Click=&quot;OpenNavigationWindow_Click&quot; /&gt;"
+                    CSharpCode="private void OpenNavigationWindow_Click(object sender, RoutedEventArgs e)&#10;        {&#10;            var window = new FrameWindow { Title = &quot;Navigation Window&quot; };&#10;            App.ShowSampleWindow(window);&#10;        }">
+                        <Button AutomationProperties.AutomationId="OpenNavigationWindow"
                             x:Name="OpenNavigationWindow"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"

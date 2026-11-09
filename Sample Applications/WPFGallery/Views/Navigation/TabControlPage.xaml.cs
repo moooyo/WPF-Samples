@@ -1,6 +1,3 @@
-﻿using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using WPFGallery.ViewModels;
 
@@ -12,14 +9,16 @@ namespace WPFGallery.Views
     /// </summary>
     public partial class TabControlPage : Page
     {
-    public TabControlPageViewModel ViewModel { get; }
+        public TabControlPageViewModel ViewModel { get; }
 
-    public TabControlPage(TabControlPageViewModel viewModel)
-    {
-        ViewModel = viewModel;
-        DataContext = this;
+        public TabControlPage() : this(App.Services.GetRequiredService<TabControlPageViewModel>()) { }
 
-        InitializeComponent();
-    }
+        public TabControlPage(TabControlPageViewModel viewModel)
+        {
+            ViewModel = viewModel;
+            DataContext = this;
+
+            InitializeComponent();
+        }
     }
 }

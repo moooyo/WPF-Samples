@@ -1,6 +1,3 @@
-﻿using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using WPFGallery.ViewModels;
 
@@ -12,11 +9,13 @@ namespace WPFGallery.Views
     public partial class TreeViewPage : Page
     {
         public TreeViewPageViewModel ViewModel { get; }
+        public TreeViewPage() : this(App.Services.GetRequiredService<TreeViewPageViewModel>()) { }
+
         public TreeViewPage(TreeViewPageViewModel viewModel)
         {
             ViewModel = viewModel;
-DataContext = this;
-InitializeComponent();
+            DataContext = this;
+            InitializeComponent();
         }
     }
 }

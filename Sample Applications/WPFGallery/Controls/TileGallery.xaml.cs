@@ -3,17 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Threading;
 
 namespace WPFGallery.Controls
 {
@@ -30,14 +19,14 @@ namespace WPFGallery.Controls
         private void ScrollBackButton_Click(object sender, RoutedEventArgs e)
         {
             double newOffSet = RootScrollViewer.HorizontalOffset - 210;
-            RootScrollViewer.ScrollToHorizontalOffset(newOffSet);
+            RootScrollViewer.ChangeView(newOffSet, null, null);
             UpdateScrollButtonsVisibility(newOffSet);
         }
 
         private void ScrollForwardButton_Click(object sender, RoutedEventArgs e)
         {
             double newOffSet = RootScrollViewer.HorizontalOffset + 210;
-            RootScrollViewer.ScrollToHorizontalOffset(newOffSet);
+            RootScrollViewer.ChangeView(newOffSet, null, null);
             UpdateScrollButtonsVisibility(newOffSet);
         }
 
@@ -54,11 +43,11 @@ namespace WPFGallery.Controls
 
             if (RootScrollViewer.ActualWidth < TilesPanel.ActualWidth)
             {
-                if(newOffset == 0)
+                if (newOffset == 0)
                 {
                     ScrollBackButton.Visibility = Visibility.Collapsed;
                 }
-                else if(newOffset >= RootScrollViewer.ScrollableWidth)
+                else if (newOffset >= RootScrollViewer.ScrollableWidth)
                 {
                     ScrollForwardButton.Visibility = Visibility.Collapsed;
                 }

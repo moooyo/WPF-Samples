@@ -9,10 +9,10 @@ namespace WPFGallery.ViewModels
     public partial class FramePageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "Frame";
+        public partial string PageTitle { get; set; } = "Frame";
 
         [ObservableProperty]
-        private string _pageDescription = "";
+        public partial string PageDescription { get; set; } = "";
 
         public FramePageViewModel() { }
     }

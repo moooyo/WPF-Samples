@@ -1,4 +1,3 @@
-﻿using System.Windows.Threading;
 using WPFGallery.Models;
 
 namespace WPFGallery.ViewModels.Samples
@@ -6,30 +5,36 @@ namespace WPFGallery.ViewModels.Samples
     public partial class UserDashboardPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private ObservableCollection<User> _users;
+        public partial ObservableCollection<User> Users { get; set; }
 
         [ObservableProperty]
-        private User? _selectedUser;
+        public partial User? SelectedUser { get; set; }
 
         [ObservableProperty]
-        private bool _isEditing;
+        public partial bool IsEditing { get; set; }
 
         [ObservableProperty]
-        private User? _editableUser;
+        public partial User? EditableUser { get; set; }
 
         [ObservableProperty]
-        private bool _isReadOnly = true;
+        public partial bool IsReadOnly { get; set; } = true;
 
         [ObservableProperty]
-        private bool _isSaved;
+        public partial bool IsSaved { get; set; }
 
         [ObservableProperty]
-        private string _deletedName = string.Empty;
+        public partial string DeletedName { get; set; } = string.Empty;
         partial void OnSelectedUserChanged(User? oldValue, User? newValue)
         {
             if (SelectedUser != null && SelectedUser != EditableUser)
             {
                 EditableUser = new User(SelectedUser);
+                IsReadOnly = true;
+                IsEditing = false;
+            }
+            else if (SelectedUser is null)
+            {
+                EditableUser = null;
                 IsReadOnly = true;
                 IsEditing = false;
             }
@@ -40,52 +45,41 @@ namespace WPFGallery.ViewModels.Samples
         {
             Users.Add(new User("New User", "") { DateOfJoining = DateTime.Today });
             SelectedUser = Users.Last();
-           
+
             IsReadOnly = false;
             IsEditing = true;
         }
 
-        private CancellationTokenSource cancelTokenSource = new();
-        private Task displayMessageTask = Task.CompletedTask;
-        partial void OnDeletedNameChanged(string? oldValue, string newValue)
+        private readonly DispatcherTimer _deletedMessageTimer = new() { Interval = TimeSpan.FromSeconds(2) };
+        private readonly DispatcherTimer _savedMessageTimer = new() { Interval = TimeSpan.FromSeconds(2) };
+        partial void OnDeletedNameChanged(string oldValue, string newValue)
         {
-            if(string.IsNullOrEmpty(newValue))
-            {               
+            if (string.IsNullOrEmpty(newValue))
+            {
                 return;
             }
 
-            cancelTokenSource = new();          
-            displayMessageTask = Task.Delay(2000, cancelTokenSource.Token).ContinueWith(_ =>
-            {
-                DeletedName = string.Empty;
-            }, TaskScheduler.FromCurrentSynchronizationContext());
+            _deletedMessageTimer.Stop();
+            _deletedMessageTimer.Start();
         }
 
         [RelayCommand]
-        private async Task RemoveUser(User selectedUser)
+        private Task RemoveUser(User selectedUser)
         {
-
-            cancelTokenSource.Cancel();
-            await displayMessageTask;
-
+            int selectedIndex = Users.IndexOf(selectedUser);
+            if (selectedIndex < 0)
+                throw new InvalidOperationException("The selected user is no longer in the dashboard.");
             DeletedName = selectedUser.Name;
-
-            int index = Users.Last().Equals(selectedUser) ?
-                Users.IndexOf(selectedUser) - 1 :
-                Users.IndexOf(selectedUser) + 1;
-
-            SelectedUser = index >= 0 ?
-                           Users[index] :
-                           null;
-
             Users.Remove(selectedUser);
+            SelectedUser = Users.Count > 0 ? Users[Math.Min(selectedIndex, Users.Count - 1)] : null;
             IsReadOnly = true;
             IsEditing = false;
+            return Task.CompletedTask;
         }
 
         [RelayCommand]
         private void EditUserStart()
-        {           
+        {
             if (SelectedUser != null)
             {
                 EditableUser = new User(SelectedUser);
@@ -100,15 +94,18 @@ namespace WPFGallery.ViewModels.Samples
         {
             if (EditableUser != null && SelectedUser != null)
             {
+                var committedUser = EditableUser;
                 int index = Users.IndexOf(SelectedUser);
-                Users.RemoveAt(index);
-                Users.Insert(index, EditableUser);
-                SelectedUser = Users[index];
+                if (index < 0)
+                    throw new InvalidOperationException("The selected user is no longer in the dashboard.");
+                Users[index] = committedUser;
+                SelectedUser = committedUser;
                 IsReadOnly = true;
                 IsEditing = false;
                 IsSaved = true;
 
-                Task.Delay(2000).ContinueWith(_ => IsSaved = false, TaskScheduler.FromCurrentSynchronizationContext());
+                _savedMessageTimer.Stop();
+                _savedMessageTimer.Start();
             }
         }
 
@@ -116,15 +113,24 @@ namespace WPFGallery.ViewModels.Samples
         [RelayCommand]
         private void EditUserCancel()
         {
-            EditableUser = null;
-            EditableUser = new User(SelectedUser);
+            EditableUser = SelectedUser is User user ? new User(user) : null;
             IsReadOnly = true;
             IsEditing = false;
         }
 
         public UserDashboardPageViewModel()
         {
-            _users = GenerateUsers();
+            Users = GenerateUsers();
+            _deletedMessageTimer.Tick += (_, _) =>
+            {
+                _deletedMessageTimer.Stop();
+                DeletedName = string.Empty;
+            };
+            _savedMessageTimer.Tick += (_, _) =>
+            {
+                _savedMessageTimer.Stop();
+                IsSaved = false;
+            };
         }
 
         private static ObservableCollection<User> GenerateUsers()

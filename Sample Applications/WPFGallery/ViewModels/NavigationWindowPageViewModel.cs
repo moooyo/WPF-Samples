@@ -9,10 +9,10 @@ namespace WPFGallery.ViewModels
     public partial class NavigationWindowPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "Navigation Window";
+        public partial string PageTitle { get; set; } = "Navigation Window";
 
         [ObservableProperty]
-        private string _pageDescription = "";
+        public partial string PageDescription { get; set; } = "";
 
         public NavigationWindowPageViewModel() { }
     }

@@ -7,13 +7,13 @@ namespace WPFGallery.ViewModels
     public partial class DesignGuidancePageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "Design Guidance";
+        public partial string PageTitle { get; set; } = "Design Guidance";
 
         [ObservableProperty]
-        private string _pageDescription = "Design guidelines on how to use colors, typography, and icons in your app.";       
+        public partial string PageDescription { get; set; } = "Design guidelines on how to use colors, typography, and icons in your app.";
 
         [ObservableProperty]
-        private ICollection<ControlInfoDataItem> _navigationCards = ControlsInfoDataSource.Instance.GetControlsInfo("Design Guidance");
+        public partial ICollection<ControlInfoDataItem> NavigationCards { get; set; } = ControlsInfoDataSource.Instance.GetControlsInfo("Design Guidance");
 
         private readonly INavigationService _navigationService;
 
@@ -23,11 +23,12 @@ namespace WPFGallery.ViewModels
         }
 
         [RelayCommand]
-        public void Navigate(object pageType){
+        public void Navigate(object pageType)
+        {
             if (pageType is Type page)
             {
                 _navigationService.NavigateTo(page);
             }
-        }  
+        }
     }
 }

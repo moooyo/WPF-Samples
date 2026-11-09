@@ -8,26 +8,26 @@ namespace WPFGallery.ViewModels;
 /// <summary>
 /// Interaction logic for FileAndFolderDialogsPage.xaml
 /// </summary>
-public partial class FileAndFolderDialogsPageViewModel : ObservableObject 
+public partial class FileAndFolderDialogsPageViewModel : ObservableObject
 {
-	[ObservableProperty]
-	private string _pageTitle = "File and Folder Dialogs";
-
-	[ObservableProperty]
-	private string _pageDescription = "Use the OpenFileDialog, SaveFileDialog, and OpenFolderDialog to let users select files and folders in a secure way.";
+    [ObservableProperty]
+    public partial string PageTitle { get; set; } = "File and Folder Dialogs";
 
     [ObservableProperty]
-    private string _singleFilePath = "No file selected";
+    public partial string PageDescription { get; set; } = "Use the OpenFileDialog, SaveFileDialog, and OpenFolderDialog to let users select files and folders in a secure way.";
 
     [ObservableProperty]
-    private string _multipleFilesPath = "No files selected";
+    public partial string SingleFilePath { get; set; } = "No file selected";
 
     [ObservableProperty]
-    private string _fileContent = "Enter text here to save to a file...";
+    public partial string MultipleFilesPath { get; set; } = "No files selected";
 
     [ObservableProperty]
-    private string _savedFilePath = "No file saved";
+    public partial string FileContent { get; set; } = "Enter text here to save to a file...";
 
     [ObservableProperty]
-    private string _selectedFolderPath = "No folder selected";
+    public partial string SavedFilePath { get; set; } = "No file saved";
+
+    [ObservableProperty]
+    public partial string SelectedFolderPath { get; set; } = "No folder selected";
 }

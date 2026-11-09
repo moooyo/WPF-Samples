@@ -5,25 +5,25 @@
 
 namespace WPFGallery.ViewModels;
 
-public partial class CheckBoxPageViewModel : ObservableObject 
+public partial class CheckBoxPageViewModel : ObservableObject
 {
-	[ObservableProperty]
-	private string _pageTitle = "CheckBox";
-
-	[ObservableProperty]
-	private string _pageDescription = "";
+    [ObservableProperty]
+    public partial string PageTitle { get; set; } = "CheckBox";
 
     [ObservableProperty]
-    private bool? _selectAllCheckBoxChecked = null;
+    public partial string PageDescription { get; set; } = "";
 
     [ObservableProperty]
-    private bool _optionOneCheckBoxChecked = false;
+    public partial bool? SelectAllCheckBoxChecked { get; set; } = null;
 
     [ObservableProperty]
-    private bool _optionTwoCheckBoxChecked = true;
+    public partial bool OptionOneCheckBoxChecked { get; set; } = false;
 
     [ObservableProperty]
-    private bool _optionThreeCheckBoxChecked = false;
+    public partial bool OptionTwoCheckBoxChecked { get; set; } = true;
+
+    [ObservableProperty]
+    public partial bool OptionThreeCheckBoxChecked { get; set; } = false;
 
     [RelayCommand]
     private void OnSelectAllChecked(object sender)

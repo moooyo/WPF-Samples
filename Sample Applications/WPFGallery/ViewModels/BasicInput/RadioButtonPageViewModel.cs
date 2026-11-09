@@ -5,16 +5,16 @@
 
 namespace WPFGallery.ViewModels;
 
-public partial class RadioButtonPageViewModel : ObservableObject 
+public partial class RadioButtonPageViewModel : ObservableObject
 {
-	[ObservableProperty]
-	private string _pageTitle = "RadioButton";
-
-	[ObservableProperty]
-	private string _pageDescription = "";
+    [ObservableProperty]
+    public partial string PageTitle { get; set; } = "RadioButton";
 
     [ObservableProperty]
-    private bool _isRadioButtonEnabled = true;
+    public partial string PageDescription { get; set; } = "";
+
+    [ObservableProperty]
+    public partial bool IsRadioButtonEnabled { get; set; } = true;
 
     [RelayCommand]
     private void OnRadioButtonCheckboxChecked(object sender)

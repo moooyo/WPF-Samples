@@ -16,6 +16,8 @@ public record Person
 
     public string Name => FirstName + " " + LastName;
 
+    public override string ToString() => Name;
+
     public string Company { get; init; }
 
     public Person(string firstName, string lastName, string company)

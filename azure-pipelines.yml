@@ -10,7 +10,7 @@ variables:
   - name: msbuildonlysolution
     value: 'WPFSamples.msbuild.sln'
   - name: wpfgallerysolution
-    value: './Sample Applications/WPFGallery/WPFGallery.sln'
+    value: 'Sample Applications\WPFGallery\WPFGallery.sln'
   - name: LangVersion
     value: latest
 
@@ -73,12 +73,12 @@ stages:
        displayName: 'Download and Cache Nuget tool'
 
      - powershell: ./eng/EnsureGlobalJsonSdk.ps1 -g global.json -i "$(Agent.ToolsDirectory)/dotnet" -a $(_ToolPlatform) -f $(_TargetFramework) -Verbose
-       displayName: Install .NET Core 
+       displayName: Install .NET Core
 
      - powershell: |
           Write-Host "Path Environment Variable:"
           Write-Host $env:PATH
-          Write-Host 
+          Write-Host
           Write-Host "List of Installed .NET Core SDK's"
           dotnet --list-sdks
        displayName: List .NET SDK's
@@ -87,16 +87,11 @@ stages:
        displayName: 'Restore .NET Core Samples Using NuGet'
        inputs:
         restoreSolution: '$(solution)'
-     
+
      - task: NuGetCommand@2
        displayName: 'Restore MSBuild-only .NET Core Samples Using NuGet'
        inputs:
         restoreSolution: '$(msbuildonlysolution)'
-
-     - task: NuGetCommand@2
-       displayName: 'Restore WPF Gallery Using NuGet'
-       inputs:
-        restoreSolution: '$(wpfgallerysolution)'
 
      - task: VSBuild@1
        continueOnError: true
@@ -120,18 +115,6 @@ stages:
         configuration: '$(_Configuration)'
         msbuildArgs: /m /bl:"$(Build.ArtifactStagingDirectory)\vsbuild\msbuild.vsbuild.$(_Configuration).$(_Platform).$(_TargetFramework).binlog" /p:LangVersion=$(LangVersion)
 
-     - task: VSBuild@1
-       continueOnError: true
-       displayName: 'Build WPF Gallery using VSBuild'
-       inputs:
-        vsVersion: latest
-        solution: '$(wpfgallerysolution)'
-        platform: '$(_Platform)'
-        msbuildArchitecture: '$(_ToolPlatform)'
-        configuration: '$(_Configuration)'
-        msbuildArgs: /m /bl:"$(Build.ArtifactStagingDirectory)\vsbuild\wpfgallery.vsbuild.$(_Configuration).$(_Platform).$(_TargetFramework).binlog" /p:LangVersion=$(LangVersion)
-       condition: ne(variables['_Platform'], 'x86')
-       
      - task: PublishBuildArtifacts@1
        continueOnError: true
        displayName: 'Publish .NET Core VSBuild Build Logs'
@@ -146,7 +129,7 @@ stages:
         targetType: 'inline'
         script: |
           # Write your PowerShell commands here.
-          
+
           git clean -xdf
 
      - task: DotNetCoreCLI@2
@@ -161,16 +144,6 @@ stages:
 
      - task: DotNetCoreCLI@2
        continueOnError: true
-       displayName: 'Restore WPF Gallery using dotnet.exe'
-       inputs:
-        command: 'restore'
-        configuration: $(_Configuration)
-        projects: '$(wpfgallerysolution)'
-        feedsToUse: 'config'
-        nugetConfigPath: 'NuGet.config'
-
-     - task: DotNetCoreCLI@2
-       continueOnError: true
        displayName: 'Build .NET Core Samples using dotnet.exe'
        inputs:
         command: 'build'
@@ -178,25 +151,62 @@ stages:
         configuration: $(_Configuration)
         arguments: '/bl:"$(Build.ArtifactStagingDirectory)\netcore\dotnet.$(_Configuration).$(_Platform).$(_TargetFramework).binlog" /p:Platform="$(_Platform)" /p:LangVersion=$(LangVersion)'
 
-     - task: DotNetCoreCLI@2
-       continueOnError: true
-       displayName: 'Build WPF Gallery using dotnet.exe'
-       inputs:
-        command: 'build'
-        projects: '$(wpfgallerysolution)'
-        configuration: $(_Configuration)
-        arguments: '/bl:"$(Build.ArtifactStagingDirectory)\netcore\dotnet.$(_Configuration).$(_Platform).$(_TargetFramework).binlog" /p:Platform="$(_Platform)" /p:LangVersion=$(LangVersion)'
-       condition: ne(variables['_Platform'], 'x86')
-
      - task: PublishBuildArtifacts@1
        displayName: 'Publish .NET Core Dotnet.exe Build Logs'
        inputs:
         PathtoPublish: $(Build.ArtifactStagingDirectory)\netcore
         ArtifactName: 'Build Logs'
         publishLocation: 'Container'
-    
+
      - task: ComponentGovernanceComponentDetection@0
        displayName: "Component Detection"
+
+  - job: WinUIGallery
+    displayName: Build migrated WinUI Gallery
+    strategy:
+      matrix:
+        Debug-x64:
+          GalleryConfiguration: Debug
+          GalleryPlatform: x64
+        Debug-x86:
+          GalleryConfiguration: Debug
+          GalleryPlatform: x86
+        Debug-ARM64:
+          GalleryConfiguration: Debug
+          GalleryPlatform: ARM64
+        Release-x64:
+          GalleryConfiguration: Release
+          GalleryPlatform: x64
+        Release-x86:
+          GalleryConfiguration: Release
+          GalleryPlatform: x86
+        Release-ARM64:
+          GalleryConfiguration: Release
+          GalleryPlatform: ARM64
+    steps:
+      - powershell: .\eng\EnsureGlobalJsonSdk.ps1 -g global.json -i "$(Agent.ToolsDirectory)\dotnet" -a x64 -f net10.0-windows -Verbose
+        displayName: Install .NET SDK for WinUI
+      - task: DotNetCoreCLI@2
+        displayName: Restore WinUI Gallery
+        inputs:
+          command: restore
+          projects: '$(wpfgallerysolution)'
+          arguments: '-p:Platform=$(GalleryPlatform)'
+          feedsToUse: config
+          nugetConfigPath: NuGet.config
+      - task: DotNetCoreCLI@2
+        displayName: Build WinUI Gallery
+        inputs:
+          command: build
+          projects: '$(wpfgallerysolution)'
+          arguments: '--no-restore -c $(GalleryConfiguration) -p:Platform=$(GalleryPlatform) /bl:"$(Build.ArtifactStagingDirectory)\gallery\$(GalleryConfiguration).$(GalleryPlatform).binlog"'
+      - task: PublishBuildArtifacts@1
+        displayName: Publish WinUI Gallery build logs
+        condition: always()
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)\gallery'
+          ArtifactName: 'WinUI Gallery Build Logs'
+          publishLocation: Container
 
      - task: PowerShell@2
        displayName: 'Clean Files From Previous Builds'
@@ -204,6 +214,6 @@ stages:
         targetType: 'inline'
         script: |
           # Write your PowerShell commands here.
-          
+
           git checkout global.json
-          git clean -xdf        
+          git clean -xdf

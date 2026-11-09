@@ -1,90 +1,52 @@
-using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Microsoft.Win32;
-
+using WPFGallery.Services;
 using WPFGallery.ViewModels;
 
-namespace WPFGallery.Views
+namespace WPFGallery.Views;
+
+public partial class FileAndFolderDialogsPage : Page
 {
-    /// <summary>
-    /// Interaction logic for FileAndFolderDialogsPage.xaml
-    /// </summary>
-    public partial class FileAndFolderDialogsPage : Page
+    public FileAndFolderDialogsPageViewModel ViewModel { get; }
+    private readonly IFilePickerService _pickers;
+
+    public FileAndFolderDialogsPage() : this(
+        App.Services.GetRequiredService<FileAndFolderDialogsPageViewModel>(),
+        App.Services.GetRequiredService<IFilePickerService>())
+    { }
+
+    public FileAndFolderDialogsPage(FileAndFolderDialogsPageViewModel viewModel, IFilePickerService pickers)
     {
-        public FileAndFolderDialogsPageViewModel ViewModel { get; }
+        ViewModel = viewModel;
+        _pickers = pickers;
+        InitializeComponent();
+    }
 
-        public FileAndFolderDialogsPage(FileAndFolderDialogsPageViewModel viewModel)
+    private async void PickSingleFileButton_Click(object sender, RoutedEventArgs args)
+    {
+        if (await _pickers.OpenFileAsync() is { } path) ViewModel.SingleFilePath = path;
+    }
+
+    private async void PickMultipleFilesButton_Click(object sender, RoutedEventArgs args)
+    {
+        var paths = await _pickers.OpenFilesAsync();
+        if (paths.Count > 0)
+            ViewModel.MultipleFilesPath = $"Selected {paths.Count} file(s): {string.Join(", ", paths)}";
+    }
+
+    private async void SaveFileButton_Click(object sender, RoutedEventArgs args)
+    {
+        try
         {
-            ViewModel = viewModel;
-            DataContext = this;
-            InitializeComponent();
+            if (await _pickers.SaveFileAsync(ViewModel.FileContent) is { } path)
+                ViewModel.SavedFilePath = $"File saved successfully: {path}";
         }
-
-        private void PickSingleFileButton_Click(object sender, RoutedEventArgs e)
+        catch (Exception ex)
         {
-            var openFileDialog = new OpenFileDialog
-            {
-                Title = "Select a file",
-                Filter = "All files (*.*)|*.*|Text files (*.txt)|*.txt",
-                Multiselect = false
-            };
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                ViewModel.SingleFilePath = openFileDialog.FileName;
-            }
+            ViewModel.SavedFilePath = $"Error saving file: {ex.Message}";
         }
+    }
 
-        private void PickMultipleFilesButton_Click(object sender, RoutedEventArgs e)
-        {
-            var openFileDialog = new OpenFileDialog
-            {
-                Title = "Select multiple files",
-                Filter = "All files (*.*)|*.*|Text files (*.txt)|*.txt",
-                Multiselect = true
-            };
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                ViewModel.MultipleFilesPath = $"Selected {openFileDialog.FileNames.Length} file(s): {string.Join(", ", openFileDialog.FileNames)}";
-            }
-        }
-
-        private void SaveFileButton_Click(object sender, RoutedEventArgs e)
-        {
-            var saveFileDialog = new SaveFileDialog
-            {
-                Title = "Save file",
-                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
-                DefaultExt = "txt"
-            };
-
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                try
-                {
-                    System.IO.File.WriteAllText(saveFileDialog.FileName, ViewModel.FileContent);
-                    ViewModel.SavedFilePath = $"File saved successfully: {saveFileDialog.FileName}";
-                }
-                catch (Exception ex)
-                {
-                    ViewModel.SavedFilePath = $"Error saving file: {ex.Message}";
-                }
-            }
-        }
-
-        private void PickFolderButton_Click(object sender, RoutedEventArgs e)
-        {
-            var folderBrowserDialog = new OpenFolderDialog
-            {
-                Title = "Select a folder"
-            };
-
-            if (folderBrowserDialog.ShowDialog() == true)
-            {
-                ViewModel.SelectedFolderPath = folderBrowserDialog.FolderName;
-            }
-        }
+    private async void PickFolderButton_Click(object sender, RoutedEventArgs args)
+    {
+        if (await _pickers.OpenFolderAsync() is { } path) ViewModel.SelectedFolderPath = path;
     }
 }

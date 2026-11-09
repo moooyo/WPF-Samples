@@ -1,109 +1,68 @@
-using System.Windows.Documents;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
+using WPFGallery.Services;
 using WPFGallery.ViewModels;
 
-namespace WPFGallery.Views
+namespace WPFGallery.Views;
+
+public partial class ClipboardPage : Page
 {
-    /// <summary>
-    /// Interaction logic for ClipboardPage.xaml
-    /// </summary>
-    public partial class ClipboardPage : Page
+    public ClipboardPageViewModel ViewModel { get; }
+    private readonly IClipboardService _clipboard;
+
+    public ClipboardPage() : this(App.Services.GetRequiredService<ClipboardPageViewModel>(),
+        App.Services.GetRequiredService<IClipboardService>())
+    { }
+
+    public ClipboardPage(ClipboardPageViewModel viewModel, IClipboardService clipboard)
     {
-        public ClipboardPageViewModel ViewModel { get; }
+        ViewModel = viewModel;
+        _clipboard = clipboard;
+        InitializeComponent();
+    }
 
-        public ClipboardPage(ClipboardPageViewModel viewModel)
+    private void CopyToClipboard_Click(object sender, RoutedEventArgs args)
+    {
+        var text = CopyTextBox.Text;
+        if (string.IsNullOrEmpty(text))
         {
-            ViewModel = viewModel;
-            DataContext = this;
-            InitializeComponent();
+            ViewModel.CopyStatus = "Nothing to copy - text box is empty.";
+            return;
         }
+        _clipboard.CopyText(text);
+        ViewModel.CopyStatus = $"Copied \"{text}\" to clipboard!";
+    }
 
-        private void CopyToClipboard_Click(object sender, RoutedEventArgs e)
+    private async void PasteFromClipboard_Click(object sender, RoutedEventArgs args) =>
+        ViewModel.PastedText = await _clipboard.ReadTextAsync() ?? "(No text in clipboard)";
+
+    private void ClearClipboard_Click(object sender, RoutedEventArgs args)
+    {
+        _clipboard.Clear();
+        ViewModel.ClearStatus = "Clipboard cleared!";
+        ViewModel.PastedText = "";
+    }
+
+    private void CheckFormats_Click(object sender, RoutedEventArgs args) =>
+        ViewModel.FormatsInfo = _clipboard.DescribeFormats();
+
+    private void CopyImageToClipboard_Click(object sender, RoutedEventArgs args)
+    {
+        if (SourceImage.Source is BitmapImage { UriSource: { } source })
         {
-            var text = CopyTextBox.Text;
-            if (!string.IsNullOrEmpty(text))
-            {
-                Clipboard.SetText(text);
-                ViewModel.CopyStatus = $"Copied \"{text}\" to clipboard!";
-            }
-            else
-            {
-                ViewModel.CopyStatus = "Nothing to copy - text box is empty.";
-            }
+            _clipboard.CopyImage(source);
+            ViewModel.CopyImageStatus = "Image copied to clipboard!";
         }
-
-        private void PasteFromClipboard_Click(object sender, RoutedEventArgs e)
+        else
         {
-            if (Clipboard.ContainsText())
-            {
-                ViewModel.PastedText = Clipboard.GetText();
-            }
-            else
-            {
-                ViewModel.PastedText = "(No text in clipboard)";
-            }
+            ViewModel.CopyImageStatus = "Failed to copy image.";
         }
+    }
 
-        private void ClearClipboard_Click(object sender, RoutedEventArgs e)
-        {
-            Clipboard.Clear();
-            ViewModel.ClearStatus = "Clipboard cleared!";
-            ViewModel.PastedText = "";
-        }
-
-        private void CheckFormats_Click(object sender, RoutedEventArgs e)
-        {
-            var formats = new System.Text.StringBuilder();
-            formats.AppendLine("Clipboard contains:");
-            formats.AppendLine($"  • Text: {Clipboard.ContainsText()}");
-            formats.AppendLine($"  • Image: {Clipboard.ContainsImage()}");
-            formats.AppendLine($"  • File Drop List: {Clipboard.ContainsFileDropList()}");
-            formats.AppendLine($"  • Audio: {Clipboard.ContainsAudio()}");
-            ViewModel.FormatsInfo = formats.ToString();
-        }
-
-        private void CopyImageToClipboard_Click(object sender, RoutedEventArgs e)
-        {
-            if (SourceImage.Source is BitmapSource bitmapSource)
-            {
-                Clipboard.SetImage(bitmapSource);
-                ViewModel.CopyImageStatus = "Image copied to clipboard!";
-            }
-            else
-            {
-                ViewModel.CopyImageStatus = "Failed to copy image.";
-            }
-        }
-
-        private void PasteImageFromClipboard_Click(object sender, RoutedEventArgs e)
-        {
-            if (Clipboard.ContainsImage())
-            {
-                BitmapSource image = Clipboard.GetImage();
-                PastedImage.Source = image;
-                PastedImage.Visibility = Visibility.Visible;
-                ViewModel.PasteImageStatus = $"Image pasted! Size: {image.PixelWidth}x{image.PixelHeight}";
-            }
-            else
-            {
-                PastedImage.Source = null;
-                PastedImage.Visibility = Visibility.Hidden;
-                ViewModel.PasteImageStatus = "No image in clipboard.";
-            }
-        }
-
-        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = e.Uri.AbsoluteUri,
-                UseShellExecute = true
-            });
-
-            e.Handled = true;
-        }
+    private async void PasteImageFromClipboard_Click(object sender, RoutedEventArgs args)
+    {
+        var image = await _clipboard.ReadImageAsync();
+        PastedImage.Source = image;
+        PastedImage.Visibility = image is null ? Visibility.Collapsed : Visibility.Visible;
+        ViewModel.PasteImageStatus = image is null
+            ? "No image in clipboard." : $"Image pasted! Size: {image.PixelWidth}x{image.PixelHeight}";
     }
 }

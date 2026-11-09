@@ -1,6 +1,3 @@
-﻿using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using WPFGallery.ViewModels;
 
 namespace WPFGallery.Views
@@ -10,6 +7,8 @@ namespace WPFGallery.Views
     /// </summary>
     public partial class DashboardPage : Page
     {
+
+        public DashboardPage() : this(App.Services.GetRequiredService<DashboardPageViewModel>()) { }
 
         public DashboardPage(DashboardPageViewModel viewModel)
         {

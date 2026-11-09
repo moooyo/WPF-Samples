@@ -1,6 +1,3 @@
-using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using WPFGallery.ViewModels;
 namespace WPFGallery.Views
@@ -10,8 +7,10 @@ namespace WPFGallery.Views
     /// </summary>
     public partial class SystemPage : Page
     {
-        public SystemPageViewModel ViewModel { get; } 
-		public SystemPage(SystemPageViewModel viewModel)
+        public SystemPageViewModel ViewModel { get; }
+        public SystemPage() : this(App.Services.GetRequiredService<SystemPageViewModel>()) { }
+
+        public SystemPage(SystemPageViewModel viewModel)
         {
             InitializeComponent();
             ViewModel = viewModel;

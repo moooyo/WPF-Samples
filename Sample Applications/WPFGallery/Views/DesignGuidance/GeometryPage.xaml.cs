@@ -1,7 +1,3 @@
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
-using Microsoft.Win32;
 using WPFGallery.Helpers;
 using WPFGallery.ViewModels;
 
@@ -14,32 +10,27 @@ namespace WPFGallery.Views
     {
         public GeometryPageViewModel ViewModel { get; }
 
+        public GeometryPage() : this(App.Services.GetRequiredService<GeometryPageViewModel>()) { }
+
         public GeometryPage(GeometryPageViewModel viewModel)
         {
             InitializeComponent();
-            UpdateImageResources();
+
             ViewModel = viewModel;
             DataContext = this;
-            SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;
-        }
-
-        private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                UpdateImageResources();
-            });
+            Loaded += (_, _) => UpdateImageResources();
+            ActualThemeChanged += (_, _) => UpdateImageResources();
         }
 
         private void UpdateImageResources()
         {
-            if (Utility.IsLightTheme())
+            if (ActualTheme == ElementTheme.Light)
             {
-                GeometryImage.Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Design/Geometry.light.png"));
+                GeometryImage.Source = new BitmapImage(new Uri("ms-appx:///Assets/Design/Geometry.light.png"));
             }
             else
             {
-                GeometryImage.Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Design/Geometry.dark.png"));
+                GeometryImage.Source = new BitmapImage(new Uri("ms-appx:///Assets/Design/Geometry.dark.png"));
             }
         }
     }

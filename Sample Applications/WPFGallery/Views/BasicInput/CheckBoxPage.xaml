@@ -9,36 +9,36 @@
     x:Class="WPFGallery.Views.CheckBoxPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="clr-namespace:WPFGallery.Controls"
+    xmlns:controls="using:WPFGallery.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:WPFGallery.Views"
+    xmlns:local="using:WPFGallery.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="CheckBox"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
 
-    <Grid x:Name="ContentPagePane" Height="Auto">
+    <Grid x:Name="ContentPagePane">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <controls:PageHeader Margin="0,0,0,32" Title="{Binding ViewModel.PageTitle}" ShowDescription="False" />
+        <controls:PageHeader Margin="0,0,0,32" Title="{x:Bind ViewModel.PageTitle, Mode=OneWay}" ShowDescription="False" />
 
         <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
             <StackPanel Margin="0,0,0,24">
-                <controls:ControlExample Margin="10" HeaderText="A 2-state CheckBox." XamlCode="&lt;CheckBox Content=&quot;Two-state CheckBox&quot; /&gt;">
-                    <CheckBox AutomationProperties.Name="Sample Two State" Content="Two-state CheckBox" />
+                <controls:ControlExample Margin="10" HeaderText="A 2-state CheckBox."
+                    XamlCode="&lt;CheckBox AutomationProperties.AutomationId=&quot;Sample Two State&quot; AutomationProperties.Name=&quot;Sample Two State&quot; Content=&quot;Two-state CheckBox&quot; /&gt;">
+                    <CheckBox AutomationProperties.AutomationId="Sample Two State" AutomationProperties.Name="Sample Two State" Content="Two-state CheckBox" />
                 </controls:ControlExample>
 
 
                 <controls:ControlExample
                     Margin="10,32,10,10"
                     HeaderText="A 3-state CheckBox."
-                    XamlCode="&lt;CheckBox IsThreeState=&quot;True&quot; Content=&quot;Three-state CheckBox&quot; IsChecked=&quot;{x:Null}&quot; /&gt;">
-                    <CheckBox
+                    XamlCode="&lt;CheckBox AutomationProperties.AutomationId=&quot;Sample Three State&quot;&#10;    AutomationProperties.Name=&quot;Sample Three State&quot;&#10;    Content=&quot;Three-state CheckBox&quot;&#10;    IsChecked=&quot;{x:Null}&quot;&#10;    IsThreeState=&quot;True&quot; /&gt;">
+                    <CheckBox AutomationProperties.AutomationId="Sample Three State"
                         AutomationProperties.Name="Sample Three State"
                         Content="Three-state CheckBox"
                         IsChecked="{x:Null}"
@@ -48,32 +48,32 @@
                 <controls:ControlExample
                     Margin="10,32,10,10"
                     HeaderText="Using a 3-state CheckBox."
-                    XamlCode="&lt;StackPanel&gt;             &#10;&#9;&lt;CheckBox Content=&quot;Select all&quot; IsThreeState=&quot;True&quot; /&gt;             &#10;&#9;&lt;CheckBox Margin=&quot;24,0,0,0&quot; Content=&quot;Option 1&quot; /&gt;             &#10;&#9;&lt;CheckBox Margin=&quot;24,0,0,0&quot; Content=&quot;Option 2&quot; /&gt;             &#10;&#9;&lt;CheckBox Margin=&quot;24,0,0,0&quot; Content=&quot;Option 3&quot; /&gt;             &#10;&lt;/StackPanel&gt;">
+                    XamlCode="&lt;StackPanel&gt;&#10;    &lt;CheckBox AutomationProperties.AutomationId=&quot;SelectAllCheckedCommand&quot;&#10;        Command=&quot;{x:Bind ViewModel.SelectAllCheckedCommand, Mode=OneWay}&quot;&#10;        CommandParameter=&quot;{Binding RelativeSource={RelativeSource Self}, Mode=OneWay}&quot;&#10;        Content=&quot;Select all&quot;&#10;        IsChecked=&quot;{x:Bind ViewModel.SelectAllCheckBoxChecked, Mode=TwoWay}&quot;&#10;        IsThreeState=&quot;True&quot; /&gt;&#10;    &lt;CheckBox AutomationProperties.AutomationId=&quot;SingleCheckedCommand&quot;&#10;        Margin=&quot;24,0,0,0&quot;&#10;        Command=&quot;{x:Bind ViewModel.SingleCheckedCommand, Mode=OneWay}&quot;&#10;        CommandParameter=&quot;1&quot;&#10;        Content=&quot;Option 1&quot;&#10;        IsChecked=&quot;{x:Bind ViewModel.OptionOneCheckBoxChecked, Mode=TwoWay}&quot; /&gt;&#10;    &lt;CheckBox AutomationProperties.AutomationId=&quot;SingleCheckedCommand&quot;&#10;        Margin=&quot;24,0,0,0&quot;&#10;        Command=&quot;{x:Bind ViewModel.SingleCheckedCommand, Mode=OneWay}&quot;&#10;        CommandParameter=&quot;2&quot;&#10;        Content=&quot;Option 2&quot;&#10;        IsChecked=&quot;{x:Bind ViewModel.OptionTwoCheckBoxChecked, Mode=TwoWay}&quot; /&gt;&#10;    &lt;CheckBox AutomationProperties.AutomationId=&quot;SingleCheckedCommand&quot;&#10;        Margin=&quot;24,0,0,0&quot;&#10;        Command=&quot;{x:Bind ViewModel.SingleCheckedCommand, Mode=OneWay}&quot;&#10;        CommandParameter=&quot;3&quot;&#10;        Content=&quot;Option 3&quot;&#10;        IsChecked=&quot;{x:Bind ViewModel.OptionThreeCheckBoxChecked, Mode=TwoWay}&quot; /&gt;&#10;&lt;/StackPanel&gt;">
                     <StackPanel>
-                        <CheckBox
-                            Command="{Binding ViewModel.SelectAllCheckedCommand, Mode=OneWay}"
+                        <CheckBox AutomationProperties.AutomationId="SelectAllCheckedCommand"
+                            Command="{x:Bind ViewModel.SelectAllCheckedCommand, Mode=OneWay}"
                             CommandParameter="{Binding RelativeSource={RelativeSource Self}, Mode=OneWay}"
                             Content="Select all"
-                            IsChecked="{Binding ViewModel.SelectAllCheckBoxChecked, Mode=TwoWay}"
+                            IsChecked="{x:Bind ViewModel.SelectAllCheckBoxChecked, Mode=TwoWay}"
                             IsThreeState="True" />
-                        <CheckBox
+                        <CheckBox AutomationProperties.AutomationId="SingleCheckedCommand"
                             Margin="24,0,0,0"
-                            Command="{Binding ViewModel.SingleCheckedCommand, Mode=OneWay}"
+                            Command="{x:Bind ViewModel.SingleCheckedCommand, Mode=OneWay}"
                             CommandParameter="1"
                             Content="Option 1"
-                            IsChecked="{Binding ViewModel.OptionOneCheckBoxChecked, Mode=TwoWay}" />
-                        <CheckBox
+                            IsChecked="{x:Bind ViewModel.OptionOneCheckBoxChecked, Mode=TwoWay}" />
+                        <CheckBox AutomationProperties.AutomationId="SingleCheckedCommand"
                             Margin="24,0,0,0"
-                            Command="{Binding ViewModel.SingleCheckedCommand, Mode=OneWay}"
+                            Command="{x:Bind ViewModel.SingleCheckedCommand, Mode=OneWay}"
                             CommandParameter="2"
                             Content="Option 2"
-                            IsChecked="{Binding ViewModel.OptionTwoCheckBoxChecked, Mode=TwoWay}" />
-                        <CheckBox
+                            IsChecked="{x:Bind ViewModel.OptionTwoCheckBoxChecked, Mode=TwoWay}" />
+                        <CheckBox AutomationProperties.AutomationId="SingleCheckedCommand"
                             Margin="24,0,0,0"
-                            Command="{Binding ViewModel.SingleCheckedCommand, Mode=OneWay}"
+                            Command="{x:Bind ViewModel.SingleCheckedCommand, Mode=OneWay}"
                             CommandParameter="3"
                             Content="Option 3"
-                            IsChecked="{Binding ViewModel.OptionThreeCheckBoxChecked, Mode=TwoWay}" />
+                            IsChecked="{x:Bind ViewModel.OptionThreeCheckBoxChecked, Mode=TwoWay}" />
                     </StackPanel>
                 </controls:ControlExample>
             </StackPanel>

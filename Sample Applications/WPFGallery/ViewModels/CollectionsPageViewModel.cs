@@ -7,14 +7,14 @@ namespace WPFGallery.ViewModels
     public partial class CollectionsPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "Collections";
+        public partial string PageTitle { get; set; } = "Collections";
 
         [ObservableProperty]
-        private string _pageDescription = "Controls for collection presentation";
+        public partial string PageDescription { get; set; } = "Controls for collection presentation";
 
 
         [ObservableProperty]
-        private ICollection<ControlInfoDataItem> _navigationCards = ControlsInfoDataSource.Instance.GetControlsInfo("Collections");
+        public partial ICollection<ControlInfoDataItem> NavigationCards { get; set; } = ControlsInfoDataSource.Instance.GetControlsInfo("Collections");
 
         private readonly INavigationService _navigationService;
 
@@ -24,13 +24,14 @@ namespace WPFGallery.ViewModels
         }
 
         [RelayCommand]
-        public void Navigate(object pageType){
+        public void Navigate(object pageType)
+        {
             if (pageType is Type page)
             {
                 _navigationService.NavigateTo(page);
             }
         }
 
-        
+
     }
 }

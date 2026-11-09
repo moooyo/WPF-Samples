@@ -1,6 +1,3 @@
-using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using WPFGallery.ViewModels;
 using WPFGallery.ViewModels.Layout;
@@ -12,6 +9,8 @@ namespace WPFGallery.Views
     /// </summary>
     public partial class BorderPage : Page
     {
+        public BorderPage() : this(App.Services.GetRequiredService<BorderPageViewModel>()) { }
+
         public BorderPage(BorderPageViewModel viewModel)
         {
             ViewModel = viewModel;

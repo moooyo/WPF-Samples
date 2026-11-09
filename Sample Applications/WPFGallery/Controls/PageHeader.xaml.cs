@@ -1,9 +1,10 @@
-using System.Windows.Controls;
 
 namespace WPFGallery.Controls;
 
 public class PageHeader : Control
 {
+    public PageHeader() => DefaultStyleKey = typeof(PageHeader);
+
     public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(
         nameof(Title),
         typeof(string),

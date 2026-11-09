@@ -8,22 +8,22 @@ namespace WPFGallery.ViewModels;
 /// <summary>
 /// Interaction logic for Button.xaml
 /// </summary>
-public partial class ButtonPageViewModel : ObservableObject 
+public partial class ButtonPageViewModel : ObservableObject
 {
-	[ObservableProperty]
-	private string _pageTitle = "Button";
-
-	[ObservableProperty]
-	private string _pageDescription = "";
+    [ObservableProperty]
+    public partial string PageTitle { get; set; } = "Button";
 
     [ObservableProperty]
-    private string _message = "Hello World!";
+    public partial string PageDescription { get; set; } = "";
 
     [ObservableProperty]
-    private bool _isSimpleButtonEnabled = true;
+    public partial string Message { get; set; } = "Hello World!";
 
     [ObservableProperty]
-    private bool _isUiButtonEnabled = true;
+    public partial bool IsSimpleButtonEnabled { get; set; } = true;
+
+    [ObservableProperty]
+    public partial bool IsUiButtonEnabled { get; set; } = true;
 
     [RelayCommand]
     private void OnSimpleButtonCheckboxChecked(object sender)

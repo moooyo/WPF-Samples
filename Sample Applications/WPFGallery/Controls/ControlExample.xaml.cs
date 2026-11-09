@@ -4,8 +4,7 @@
 // All Rights Reserved.
 
 using System.IO;
-using System.Windows.Automation.Peers;
-using System.Windows.Automation;
+using WPFGallery.Services;
 
 namespace WPFGallery.Controls;
 
@@ -13,14 +12,16 @@ namespace WPFGallery.Controls;
 /// A control that displays an example of a control
 /// </summary>
 
-[ContentProperty(nameof(ExampleContent))]
+[ContentProperty(Name = nameof(ExampleContent))]
 public class ControlExample : Control
 {
-    static ControlExample()
+    public ControlExample()
     {
-        CommandManager.RegisterClassCommandBinding(typeof(ControlExample), new CommandBinding(ApplicationCommands.Copy, Copy_SourceCode));
+        DefaultStyleKey = typeof(ControlExample);
+        CopyCommand = new AsyncRelayCommand<string>(CopyAsync);
     }
 
+    public IAsyncRelayCommand<string> CopyCommand { get; }
     public static readonly DependencyProperty HeaderTextProperty = DependencyProperty.Register(
         nameof(HeaderText),
         typeof(string),
@@ -115,59 +116,28 @@ public class ControlExample : Control
         CSharpCode = LoadResource(uri);
     }
 
-    private static void Copy_SourceCode(object sender, RoutedEventArgs e)
+    private async Task CopyAsync(string? language)
     {
-        if (sender is ControlExample controlExample)
+        var code = language == "C#" ? CSharpCode : XamlCode;
+        if (string.IsNullOrEmpty(code)) return;
+        try
         {
-            if(!string.IsNullOrEmpty(controlExample.XamlCode))
-            {
-                try
-                {
-                    switch (((ExecutedRoutedEventArgs)e).Parameter.ToString())
-                    {
-                        case "Copy_XamlCode":
-                            Clipboard.SetText(controlExample.XamlCode);
-                            AutomationPeer peer = UIElementAutomationPeer.CreatePeerForElement((Button)e.OriginalSource);
-                            peer.RaiseNotificationEvent(
-                                AutomationNotificationKind.Other,
-                                AutomationNotificationProcessing.ImportantMostRecent,
-                                "Source Code Copied",
-                                "ButtonClickedActivity"
-                            );
-                            break;
-                        case "Copy_CSharpCode":
-                            Clipboard.SetText(controlExample.CSharpCode);
-                            break;
-                        default:
-                            throw new InvalidOperationException();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error copying to clipboard: " + ex.Message);
-                }
-            }
+            App.Services.GetRequiredService<IClipboardService>().CopyText(code);
+            FrameworkElementAutomationPeer.FromElement(this)?.RaiseNotificationEvent(
+                AutomationNotificationKind.Other, AutomationNotificationProcessing.ImportantMostRecent,
+                "Source Code Copied", "SourceCodeCopied");
+        }
+        catch (Exception ex)
+        {
+            await App.Services.GetRequiredService<IDialogService>().ShowAsync(
+                XamlRoot, "Error copying to clipboard: " + ex.Message, "Clipboard error", image: DialogImage.Error);
         }
     }
 
     private static string LoadResource(Uri uri)
     {
-        try
-        {
-            if (Application.GetResourceStream(uri) is not { } steamInfo)
-            {
-                return String.Empty;
-            }
-
-            using StreamReader streamReader = new(steamInfo.Stream, Encoding.UTF8);
-
-            return streamReader.ReadToEnd();
-        }
-        catch (Exception e)
-        {
-            Debug.WriteLine(e);
-            return e.ToString();
-        }
+        var relativePath = Uri.UnescapeDataString(uri.AbsolutePath).TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+        return File.ReadAllText(Path.Combine(AppContext.BaseDirectory, relativePath), Encoding.UTF8);
     }
 }
 

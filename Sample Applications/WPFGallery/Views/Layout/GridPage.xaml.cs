@@ -7,6 +7,8 @@ namespace WPFGallery.Views
     /// </summary>
     public partial class GridPage : Page
     {
+        public GridPage() : this(App.Services.GetRequiredService<GridPageViewModel>()) { }
+
         public GridPage(GridPageViewModel viewModel)
         {
             ViewModel = viewModel;

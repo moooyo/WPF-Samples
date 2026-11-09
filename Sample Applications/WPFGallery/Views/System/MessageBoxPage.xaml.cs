@@ -1,6 +1,4 @@
-using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using WPFGallery.Services;
 
 using WPFGallery.ViewModels;
 
@@ -13,6 +11,8 @@ namespace WPFGallery.Views
     {
         public MessageBoxPageViewModel ViewModel { get; }
 
+        public MessageBoxPage() : this(App.Services.GetRequiredService<MessageBoxPageViewModel>()) { }
+
         public MessageBoxPage(MessageBoxPageViewModel viewModel)
         {
             ViewModel = viewModel;
@@ -20,30 +20,30 @@ namespace WPFGallery.Views
             InitializeComponent();
         }
 
-        private void ShowDefaultMessageButton_Click(object sender, RoutedEventArgs e)
+        private async void ShowDefaultMessageButton_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show("This is a simple message box!");
+            var result = await App.Services.GetRequiredService<IDialogService>().ShowAsync(XamlRoot, "This is a simple message box!");
             ViewModel.DefaultMessageResult = $"Result: {result}";
         }
 
-        private void ShowCustomTitleButton_Click(object sender, RoutedEventArgs e)
+        private async void ShowCustomTitleButton_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show("This is a detailed description of what happened or what action is needed.", "Custom Title");
+            var result = await App.Services.GetRequiredService<IDialogService>().ShowAsync(XamlRoot, "This is a detailed description of what happened or what action is needed.", "Custom Title");
             ViewModel.CustomTitleResult = $"Result: {result}";
         }
 
-        private void ShowButtonFromComboBox_Click(object sender, RoutedEventArgs e)
+        private async void ShowButtonFromComboBox_Click(object sender, RoutedEventArgs e)
         {
-            MessageBoxButton buttonType = ViewModel.SelectedButtonIndex switch
+            DialogButtons buttonType = ViewModel.SelectedButtonIndex switch
             {
-                0 => MessageBoxButton.OK,
-                1 => MessageBoxButton.OKCancel,
-                2 => MessageBoxButton.AbortRetryIgnore,
-                3 => MessageBoxButton.YesNoCancel,
-                4 => MessageBoxButton.YesNo,
-                5 => MessageBoxButton.RetryCancel,
-                6 => MessageBoxButton.CancelTryContinue,
-                _ => MessageBoxButton.OK
+                0 => DialogButtons.OK,
+                1 => DialogButtons.OKCancel,
+                2 => DialogButtons.AbortRetryIgnore,
+                3 => DialogButtons.YesNoCancel,
+                4 => DialogButtons.YesNo,
+                5 => DialogButtons.RetryCancel,
+                6 => DialogButtons.CancelTryContinue,
+                _ => DialogButtons.OK
             };
 
             string buttonName = ViewModel.SelectedButtonIndex switch
@@ -58,20 +58,20 @@ namespace WPFGallery.Views
                 _ => "OK"
             };
 
-            var result = MessageBox.Show($"This MessageBox has {buttonName} button(s).", $"{buttonName} Button(s)", buttonType);
+            var result = await App.Services.GetRequiredService<IDialogService>().ShowAsync(XamlRoot, $"This MessageBox has {buttonName} button(s).", $"{buttonName} Button(s)", buttonType);
             ViewModel.DifferentButtonsResult = $"Result: {result}";
         }
 
-        private void ShowImageFromComboBox_Click(object sender, RoutedEventArgs e)
+        private async void ShowImageFromComboBox_Click(object sender, RoutedEventArgs e)
         {
-            MessageBoxImage imageType = ViewModel.SelectedImageIndex switch
+            DialogImage imageType = ViewModel.SelectedImageIndex switch
             {
-                0 => MessageBoxImage.None,
-                1 => MessageBoxImage.Error,
-                2 => MessageBoxImage.Question,
-                3 => MessageBoxImage.Warning,
-                4 => MessageBoxImage.Information,
-                _ => MessageBoxImage.None
+                0 => DialogImage.None,
+                1 => DialogImage.Error,
+                2 => DialogImage.Question,
+                3 => DialogImage.Warning,
+                4 => DialogImage.Information,
+                _ => DialogImage.None
             };
 
             string imageName = ViewModel.SelectedImageIndex switch
@@ -84,33 +84,33 @@ namespace WPFGallery.Views
                 _ => "None"
             };
 
-            var result = MessageBox.Show($"This MessageBox displays the {imageName} icon.", $"{imageName} Icon", MessageBoxButton.OK, imageType);
+            var result = await App.Services.GetRequiredService<IDialogService>().ShowAsync(XamlRoot, $"This MessageBox displays the {imageName} icon.", $"{imageName} Icon", DialogButtons.OK, imageType);
             ViewModel.DifferentImagesResult = $"Result: {result}";
         }
 
         // 6. Common Messages (Information, Error, Warning)
-        private void ShowCommonInformation_Click(object sender, RoutedEventArgs e)
+        private async void ShowCommonInformation_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show("The operation completed successfully.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+            var result = await App.Services.GetRequiredService<IDialogService>().ShowAsync(XamlRoot, "The operation completed successfully.", "Information", DialogButtons.OK, DialogImage.Information);
             ViewModel.CommonMessagesResult = $"Type: Information | Result: {result}";
         }
 
-        private void ShowCommonError_Click(object sender, RoutedEventArgs e)
+        private async void ShowCommonError_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show("An error occurred! The operation could not be completed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            var result = await App.Services.GetRequiredService<IDialogService>().ShowAsync(XamlRoot, "An error occurred! The operation could not be completed.", "Error", DialogButtons.OK, DialogImage.Error);
             ViewModel.CommonMessagesResult = $"Type: Error | Result: {result}";
         }
 
-        private void ShowCommonWarning_Click(object sender, RoutedEventArgs e)
+        private async void ShowCommonWarning_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show("This action cannot be undone! Do you want to continue?", "Warning", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+            var result = await App.Services.GetRequiredService<IDialogService>().ShowAsync(XamlRoot, "This action cannot be undone! Do you want to continue?", "Warning", DialogButtons.OKCancel, DialogImage.Warning);
             ViewModel.CommonMessagesResult = $"Type: Warning | Result: {result}";
         }
 
         // 7. Custom Default Button
-        private void ShowCustomDefaultButton_Click(object sender, RoutedEventArgs e)
+        private async void ShowCustomDefaultButton_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show("Do you want to save changes? Press Enter to select the default 'No' button.", "Save Changes", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.No);
+            var result = await App.Services.GetRequiredService<IDialogService>().ShowAsync(XamlRoot, "Do you want to save changes? Press Enter to select the default 'No' button.", "Save Changes", DialogButtons.YesNoCancel, DialogImage.Question, DialogResult.No);
             ViewModel.CustomDefaultResult = $"User selected: {result}";
         }
     }

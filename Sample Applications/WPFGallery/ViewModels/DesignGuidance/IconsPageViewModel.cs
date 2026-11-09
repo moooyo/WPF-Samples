@@ -7,34 +7,34 @@ namespace WPFGallery.ViewModels
     public partial class IconsPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "Icons";
+        public partial string PageTitle { get; set; } = "Icons";
 
         [ObservableProperty]
-        private string _pageDescription = "Guide showing how to use icons in your application.";
+        public partial string PageDescription { get; set; } = "Guide showing how to use icons in your application.";
 
         [ObservableProperty]
-        private ICollection<IconData> _allIcons = [];
+        public partial ICollection<IconData> AllIcons { get; set; } = [];
 
         [ObservableProperty]
-        private IconData? _selectedIcon;
+        public partial IconData? SelectedIcon { get; set; }
 
         [ObservableProperty]
-        private string _searchText = string.Empty;
+        public partial string SearchText { get; set; } = string.Empty;
 
         [ObservableProperty]
-        private ObservableCollection<IconData> _searchFilteredIcons = [];
+        public partial ObservableCollection<IconData> SearchFilteredIcons { get; set; } = [];
 
         [ObservableProperty]
-        private ObservableCollection<IconData> _displayedIcons = [];
+        public partial ObservableCollection<IconData> DisplayedIcons { get; set; } = [];
 
         [ObservableProperty]
-        private int _currentPage = 1;
+        public partial int CurrentPage { get; set; } = 1;
 
         [ObservableProperty]
-        private int _totalPages = 1;
+        public partial int TotalPages { get; set; } = 1;
 
         [ObservableProperty]
-        private int _selectedPageSizeIndex = 1; // Default to 250
+        public partial int SelectedPageSizeIndex { get; set; } = 1; // Default to 250
 
         public List<string> PageSizeOptions { get; } = ["100", "250", "500", "1000", "All"];
 
@@ -45,7 +45,8 @@ namespace WPFGallery.ViewModels
         {
             AllIcons = await ReadIconData();
             SelectedIcon = AllIcons.FirstOrDefault();
-            SearchFilteredIcons = new ObservableCollection<IconData>(AllIcons);
+            SearchFilteredIcons.Clear();
+            foreach (var icon in AllIcons) SearchFilteredIcons.Add(icon);
             UpdatePagination();
         }
 
@@ -54,8 +55,10 @@ namespace WPFGallery.ViewModels
             var assembly = Assembly.GetExecutingAssembly();
             var resourceName = "WPFGallery.Models.IconsData.json";
 
-            using Stream stream = assembly.GetManifestResourceStream(resourceName);
-            return await JsonSerializer.DeserializeAsync<List<IconData>>(stream);
+            using Stream stream = assembly.GetManifestResourceStream(resourceName)
+                ?? throw new InvalidOperationException($"Missing embedded resource: {resourceName}");
+            return await JsonSerializer.DeserializeAsync<List<IconData>>(stream)
+                ?? throw new InvalidDataException("The Gallery icon catalog is empty.");
         }
 
         partial void OnSearchTextChanged(string value)
@@ -166,29 +169,29 @@ namespace WPFGallery.ViewModels
             var pageSize = PageSize;
             TotalPages = pageSize == int.MaxValue ? 1 : (int)Math.Ceiling((double)SearchFilteredIcons.Count / pageSize);
             if (TotalPages == 0) TotalPages = 1;
-            
+
             if (CurrentPage > TotalPages)
             {
                 CurrentPage = TotalPages;
             }
-            
+
             UpdateDisplayedIcons(resetSelectedIcon);
         }
 
         private void UpdateDisplayedIcons(bool resetSelectedIcon = true)
         {
             DisplayedIcons.Clear();
-            
+
             var pageSize = PageSize;
             var skip = (CurrentPage - 1) * pageSize;
             var iconsToDisplay = pageSize == int.MaxValue ? SearchFilteredIcons : SearchFilteredIcons.Skip(skip).Take(pageSize);
-            
+
             foreach (var icon in iconsToDisplay)
             {
                 DisplayedIcons.Add(icon);
             }
 
-            if(resetSelectedIcon)
+            if (resetSelectedIcon)
             {
                 SelectedIcon = DisplayedIcons.FirstOrDefault();
             }

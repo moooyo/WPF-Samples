@@ -1,13 +1,13 @@
 
 namespace WPFGallery.ViewModels;
 
-public partial class CalendarPageViewModel : ObservableObject 
+public partial class CalendarPageViewModel : ObservableObject
 {
-	[ObservableProperty]
-	private string _pageTitle = "Calendar";
+    [ObservableProperty]
+    public partial string PageTitle { get; set; } = "Calendar";
 
-	[ObservableProperty]
-	private string _pageDescription = "";
+    [ObservableProperty]
+    public partial string PageDescription { get; set; } = "";
 
 
 }

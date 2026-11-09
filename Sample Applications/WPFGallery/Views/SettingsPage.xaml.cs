@@ -1,6 +1,3 @@
-﻿using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using WPFGallery.ViewModels;
 
 namespace WPFGallery.Views
@@ -12,9 +9,17 @@ namespace WPFGallery.Views
     {
         public SettingsPageViewModel ViewModel { get; }
 
+        public SettingsPage() : this(App.Services.GetRequiredService<SettingsPageViewModel>()) { }
+
         public SettingsPage(SettingsPageViewModel viewModel)
         {
             ViewModel = viewModel;
+            ViewModel.SelectedThemeIndex = App.MainWindow.RootTheme switch
+            {
+                ElementTheme.Light => 0,
+                ElementTheme.Dark => 1,
+                _ => 2
+            };
             DataContext = this;
             InitializeComponent();
         }
@@ -53,18 +58,18 @@ namespace WPFGallery.Views
         {
             if (Change_ThemeMode.SelectedItem is ComboBoxItem selectedItem)
             {
-                string selectedValue = selectedItem.Content.ToString();
+                string? selectedValue = selectedItem.Content?.ToString();
 
                 switch (selectedValue)
                 {
                     case "Light":
-                        Application.Current.ThemeMode = ThemeMode.Light;
+                        App.MainWindow.RootTheme = ElementTheme.Light;
                         break;
                     case "Dark":
-                        Application.Current.ThemeMode = ThemeMode.Dark;
+                        App.MainWindow.RootTheme = ElementTheme.Dark;
                         break;
                     case "Use system setting":
-                        Application.Current.ThemeMode = ThemeMode.System;
+                        App.MainWindow.RootTheme = ElementTheme.Default;
                         break;
                     default:
                         break;

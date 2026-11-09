@@ -1,13 +1,13 @@
 ﻿
 namespace WPFGallery.ViewModels
 {
-    public partial class PasswordBoxPageViewModel : ObservableObject 
-{
-	[ObservableProperty]
-	private string _pageTitle = "PasswordBox";
+    public partial class PasswordBoxPageViewModel : ObservableObject
+    {
+        [ObservableProperty]
+        public partial string PageTitle { get; set; } = "PasswordBox";
 
-	[ObservableProperty]
-	private string _pageDescription = "";
+        [ObservableProperty]
+        public partial string PageDescription { get; set; } = "";
 
     }
 }

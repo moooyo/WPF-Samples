@@ -9,10 +9,10 @@ namespace WPFGallery.ViewModels
     public partial class ResizeGripPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "ResizeGrip";
+        public partial string PageTitle { get; set; } = "ResizeGrip";
 
         [ObservableProperty]
-        private string _pageDescription = "";
+        public partial string PageDescription { get; set; } = "";
 
         public ResizeGripPageViewModel() { }
     }

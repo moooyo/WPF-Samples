@@ -7,13 +7,13 @@ using WPFGallery.Models;
 
 namespace WPFGallery.ViewModels;
 
-public partial class ListViewPageViewModel : ObservableObject 
+public partial class ListViewPageViewModel : ObservableObject
 {
-	[ObservableProperty]
-	private string _pageTitle = "ListView";
+    [ObservableProperty]
+    public partial string PageTitle { get; set; } = "ListView";
 
-	[ObservableProperty]
-	private string _pageDescription = "";
+    [ObservableProperty]
+    public partial string PageDescription { get; set; } = "";
 
     private int _listViewSelectionModeComboBoxSelectedIndex = 0;
 
@@ -28,18 +28,18 @@ public partial class ListViewPageViewModel : ObservableObject
     }
 
     [ObservableProperty]
-    private SelectionMode _listViewSelectionMode = SelectionMode.Single;
+    public partial ListViewSelectionMode ListViewSelectionMode { get; set; } = Microsoft.UI.Xaml.Controls.ListViewSelectionMode.Single;
 
     [ObservableProperty]
-    private ObservableCollection<Person> _basicListViewItems;
+    public partial ObservableCollection<Person> BasicListViewItems { get; set; }
 
     [ObservableProperty]
-    private ObservableCollection<Person> _gridViewItems;
+    public partial ObservableCollection<Person> GridViewItems { get; set; }
 
     public ListViewPageViewModel()
     {
-        _basicListViewItems = GeneratePersons();
-        _gridViewItems = GeneratePersons();
+        BasicListViewItems = GeneratePersons();
+        GridViewItems = GeneratePersons();
     }
 
     private ObservableCollection<Person> GeneratePersons()
@@ -107,9 +107,9 @@ public partial class ListViewPageViewModel : ObservableObject
     {
         ListViewSelectionMode = selectionModeIndex switch
         {
-            1 => SelectionMode.Multiple,
-            2 => SelectionMode.Extended,
-            _ => SelectionMode.Single
+            1 => Microsoft.UI.Xaml.Controls.ListViewSelectionMode.Multiple,
+            2 => Microsoft.UI.Xaml.Controls.ListViewSelectionMode.Extended,
+            _ => Microsoft.UI.Xaml.Controls.ListViewSelectionMode.Single
         };
     }
 }

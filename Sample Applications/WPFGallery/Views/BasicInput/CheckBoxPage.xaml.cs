@@ -1,6 +1,3 @@
-﻿using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using WPFGallery.ViewModels;
 
@@ -12,6 +9,8 @@ namespace WPFGallery.Views
     public partial class CheckBoxPage : Page
     {
         public CheckBoxPageViewModel ViewModel { get; }
+        public CheckBoxPage() : this(App.Services.GetRequiredService<CheckBoxPageViewModel>()) { }
+
         public CheckBoxPage(CheckBoxPageViewModel viewModel)
         {
             ViewModel = viewModel;

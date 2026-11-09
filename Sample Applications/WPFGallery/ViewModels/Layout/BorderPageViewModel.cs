@@ -1,13 +1,13 @@
 
 namespace WPFGallery.ViewModels.Layout;
 
-public partial class BorderPageViewModel : ObservableObject 
+public partial class BorderPageViewModel : ObservableObject
 {
     [ObservableProperty]
-    private string _pageTitle = "Border";
+    public partial string PageTitle { get; set; } = "Border";
 
     [ObservableProperty]
-    private string _pageDescription = "";
+    public partial string PageDescription { get; set; } = "";
 
     public BorderPageViewModel() { }
 }

@@ -1,15 +1,14 @@
-﻿using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace WPFGallery.Controls
 {
     /// <summary>
     /// Interaction logic for ColorPageExample.xaml
     /// </summary>
-    [ContentProperty(nameof(ExampleContent))]
-    public partial class ColorPageExample : UserControl
+    [ContentProperty(Name = nameof(ExampleContent))]
+    public partial class ColorPageExample : Control
     {
+        public ColorPageExample() => DefaultStyleKey = typeof(ColorPageExample);
+
         public string Description
         {
             get { return (string)GetValue(DescriptionProperty); }

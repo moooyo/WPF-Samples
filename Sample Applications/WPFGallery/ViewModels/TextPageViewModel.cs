@@ -7,13 +7,13 @@ namespace WPFGallery.ViewModels
     public partial class TextPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "Text";
+        public partial string PageTitle { get; set; } = "Text";
 
         [ObservableProperty]
-        private string _pageDescription = "Controls for displaying and editing text";
+        public partial string PageDescription { get; set; } = "Controls for displaying and editing text";
 
         [ObservableProperty]
-        private ICollection<ControlInfoDataItem> _navigationCards = ControlsInfoDataSource.Instance.GetControlsInfo("Text");
+        public partial ICollection<ControlInfoDataItem> NavigationCards { get; set; } = ControlsInfoDataSource.Instance.GetControlsInfo("Text");
         private readonly INavigationService _navigationService;
 
         public TextPageViewModel(INavigationService navigationService)
@@ -22,13 +22,14 @@ namespace WPFGallery.ViewModels
         }
 
         [RelayCommand]
-        public void Navigate(object pageType){
+        public void Navigate(object pageType)
+        {
             if (pageType is Type page)
             {
                 _navigationService.NavigateTo(page);
             }
         }
 
-        
+
     }
 }

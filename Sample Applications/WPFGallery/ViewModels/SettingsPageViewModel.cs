@@ -6,6 +6,11 @@ namespace WPFGallery.ViewModels
     public partial class SettingsPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "Settings";
+        public partial string PageTitle { get; set; } = "Settings";
+
+        public string PageDescription => string.Empty;
+
+        [ObservableProperty]
+        public partial int SelectedThemeIndex { get; set; } = 2;
     }
 }

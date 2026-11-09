@@ -1,6 +1,5 @@
 using System.Configuration;
 using System.Data;
-using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -9,6 +8,7 @@ using WPFGallery.ViewModels;
 using WPFGallery.Views;
 using WPFGallery.ViewModels.Samples;
 using WPFGallery.ViewModels.Layout;
+using WPFGallery.Services;
 
 namespace WPFGallery;
 
@@ -22,9 +22,12 @@ public partial class App : Application
         .ConfigureServices((context, services) =>
         {
             services.AddSingleton<INavigationService, NavigationService>();
+            services.AddSingleton<IDialogService, DialogService>();
+            services.AddSingleton<IClipboardService, ClipboardService>();
+            services.AddSingleton<IFilePickerService, FilePickerService>();
             services.AddSingleton<MainWindow>();
             services.AddSingleton<MainWindowViewModel>();
-            
+
             services.AddTransient<DashboardPage>();
             services.AddTransient<DashboardPageViewModel>();
 
@@ -147,31 +150,41 @@ public partial class App : Application
         }).Build();
 
 
-    [STAThread]
-    public static void Main()
-    {
-        _host.Start();
+    public static IServiceProvider Services => _host.Services;
 
-        App app = new();
-        app.InitializeComponent();
-        app.ApplyDeemphasizedTextOpacity();
-        app.MainWindow = _host.Services.GetRequiredService<MainWindow>();
-        app.MainWindow.Visibility = Visibility.Visible;
-        app.Run();
+    public static MainWindow MainWindow { get; private set; } = null!;
+
+    public App()
+    {
+        InitializeComponent();
     }
 
-    // Dimmed text fails the 4.5:1 minimum under some high-contrast themes (e.g. Desert), so render
-    // de-emphasized text at full opacity there. DynamicResource pushes the change to every consumer.
-    private void ApplyDeemphasizedTextOpacity()
+    protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        Resources["DeemphasizedTextOpacity"] = SystemParameters.HighContrast ? 1.0 : 0.7;
-        SystemParameters.StaticPropertyChanged += (_, e) =>
+        _host.Start();
+        MainWindow = Services.GetRequiredService<MainWindow>();
+        MainWindow.Closed += OnMainWindowClosed;
+        MainWindow.Activate();
+    }
+
+    private async void OnMainWindowClosed(object sender, WindowEventArgs args)
+    {
+        foreach (var window in _sampleWindows.ToArray())
         {
-            if (e.PropertyName == nameof(SystemParameters.HighContrast))
-            {
-                Resources["DeemphasizedTextOpacity"] = SystemParameters.HighContrast ? 1.0 : 0.7;
-            }
-        };
+            window.Close();
+        }
+        await _host.StopAsync();
+        _host.Dispose();
+    }
+
+    private static readonly List<Window> _sampleWindows = [];
+
+    public static void ShowSampleWindow(Window window)
+    {
+        if (window.Content is FrameworkElement root) root.RequestedTheme = MainWindow.RootTheme;
+        _sampleWindows.Add(window);
+        window.Closed += (_, _) => _sampleWindows.Remove(window);
+        window.Activate();
     }
 }
 

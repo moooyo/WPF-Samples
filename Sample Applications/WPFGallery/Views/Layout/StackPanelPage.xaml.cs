@@ -1,6 +1,3 @@
-using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using WPFGallery.ViewModels;
 using WPFGallery.ViewModels.Layout;
@@ -12,6 +9,8 @@ namespace WPFGallery.Views
     /// </summary>
     public partial class StackPanelPage : Page
     {
+        public StackPanelPage() : this(App.Services.GetRequiredService<StackPanelPageViewModel>()) { }
+
         public StackPanelPage(StackPanelPageViewModel viewModel)
         {
             ViewModel = viewModel;

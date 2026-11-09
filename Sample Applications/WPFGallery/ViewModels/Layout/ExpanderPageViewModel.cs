@@ -1,13 +1,13 @@
 
 namespace WPFGallery.ViewModels;
 
-public partial class ExpanderPageViewModel : ObservableObject 
+public partial class ExpanderPageViewModel : ObservableObject
 {
-	[ObservableProperty]
-	private string _pageTitle = "Expander";
+    [ObservableProperty]
+    public partial string PageTitle { get; set; } = "Expander";
 
-	[ObservableProperty]
-	private string _pageDescription = "";
+    [ObservableProperty]
+    public partial string PageDescription { get; set; } = "";
 
     public ExpanderPageViewModel() { }
 }

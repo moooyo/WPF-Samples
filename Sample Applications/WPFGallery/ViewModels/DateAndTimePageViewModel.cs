@@ -7,13 +7,13 @@ namespace WPFGallery.ViewModels
     public partial class DateAndTimePageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "Date & Calendar";
+        public partial string PageTitle { get; set; } = "Date & Calendar";
 
         [ObservableProperty]
-        private string _pageDescription = "Controls for date and calendar";
+        public partial string PageDescription { get; set; } = "Controls for date and calendar";
 
         [ObservableProperty]
-        private ICollection<ControlInfoDataItem> _navigationCards = ControlsInfoDataSource.Instance.GetControlsInfo("Date & Calendar");
+        public partial ICollection<ControlInfoDataItem> NavigationCards { get; set; } = ControlsInfoDataSource.Instance.GetControlsInfo("Date & Calendar");
 
         private readonly INavigationService _navigationService;
 
@@ -23,13 +23,14 @@ namespace WPFGallery.ViewModels
         }
 
         [RelayCommand]
-        public void Navigate(object pageType){
+        public void Navigate(object pageType)
+        {
             if (pageType is Type page)
             {
                 _navigationService.NavigateTo(page);
             }
         }
 
-        
+
     }
 }

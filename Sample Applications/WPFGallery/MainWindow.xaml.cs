@@ -1,9 +1,4 @@
-﻿using System.Windows.Automation;
-using System.Windows.Automation.Peers;
-using System.Windows.Controls.Primitives;
-using System.Windows.Navigation;
-using System.Windows.Shell;
-using Microsoft.Win32;
+using Microsoft.UI.Xaml.Navigation;
 using WPFGallery.Helpers;
 using WPFGallery.Models;
 using WPFGallery.Navigation;
@@ -12,292 +7,130 @@ using WPFGallery.Views;
 
 namespace WPFGallery;
 
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
-public partial class MainWindow : Window
+public partial class MainWindow : WinUIEx.WindowEx
 {
-    public MainWindow(MainWindowViewModel viewModel, IServiceProvider serviceProvider, INavigationService navigationService)
-    {
-        _serviceProvider = serviceProvider;
-        ViewModel = viewModel;
-        DataContext = this;
-        InitializeComponent();
-
-        UpdateWindowBackground();
-        UpdateMainWindowVisuals();
-
-        _navigationService = navigationService;
-        _navigationService.Navigating += OnNavigating;
-        _navigationService.SetFrame(this.RootContentFrame);
-        _navigationService.Navigate(typeof(DashboardPage), false);
-
-        WindowChrome.SetWindowChrome(
-            this,
-            new WindowChrome
-            {
-                CaptionHeight = 50,
-                CornerRadius = new CornerRadius(12),
-                GlassFrameThickness = new Thickness(-1),
-                ResizeBorderThickness = ResizeMode == ResizeMode.NoResize ? default : new Thickness(4),
-                UseAeroCaptionButtons = true,
-                NonClientFrameEdges = GetPrefferedNonClientFrameEdges()
-            }
-        );
-
-        SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;
-        this.StateChanged += (s, e) => UpdateMainWindowVisuals();
-        this.Activated += (s, e) => UpdateMainWindowVisuals();
-        this.Deactivated += (s, e) => UpdateMainWindowVisuals();
-    }
-
-    private void UpdateWindowBackground()
-    {
-        if((!Utility.IsBackdropDisabled() && !Utility.IsBackdropSupported()))
-        {
-            this.SetResourceReference(BackgroundProperty, "WindowBackground");
-        }
-    }
-
-    private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
-    {
-        Dispatcher.Invoke(() =>
-        {
-            UpdateMainWindowVisuals();
-        });
-    }
-
-    private readonly IServiceProvider _serviceProvider;
     private readonly INavigationService _navigationService;
+    private readonly Dictionary<Type, NavigationViewItem> _navigationItems = [];
+    private bool _synchronizingSelection;
 
     public MainWindowViewModel ViewModel { get; }
-
-    private void UpdateTitleBarButtonsVisibility()
+    public ElementTheme RootTheme
     {
-        if (Utility.IsBackdropDisabled() || !Utility.IsBackdropSupported() ||
-                SystemParameters.HighContrast == true)
+        get => Root.RequestedTheme;
+        set => Root.RequestedTheme = value;
+    }
+
+    public MainWindow(MainWindowViewModel viewModel, INavigationService navigationService)
+    {
+        ViewModel = viewModel;
+        _navigationService = navigationService;
+        InitializeComponent();
+        if (!Utility.IsBackdropDisabled())
         {
-            MinimizeButton.Visibility = Visibility.Visible;
-            MaximizeButton.Visibility = Visibility.Visible;
-            CloseButton.Visibility = Visibility.Visible;
+            SystemBackdrop = new MicaBackdrop();
         }
-        else
+        foreach (var item in ViewModel.Controls)
         {
-            MinimizeButton.Visibility = Visibility.Collapsed;
-            MaximizeButton.Visibility = Visibility.Collapsed;
-            CloseButton.Visibility = Visibility.Collapsed;
+            Navigation.MenuItems.Add(CreateNavigationItem(item));
+        }
+        _navigationService.SetFrame(RootContentFrame);
+        _navigationService.Navigating += OnNavigating;
+        Root.Loaded += (_, _) =>
+        {
+            if (Navigation.SettingsItem is not NavigationViewItem settingsItem)
+                throw new InvalidOperationException("The navigation settings item has not been initialized.");
+            AutomationProperties.SetAutomationId(settingsItem, "NavSettings");
+            _navigationService.Navigate(typeof(DashboardPage), false);
+        };
+        Closed += (_, _) => _navigationService.Navigating -= OnNavigating;
+    }
+
+    private NavigationViewItem CreateNavigationItem(ControlInfoDataItem data)
+    {
+        var item = new NavigationViewItem
+        {
+            Content = data.Title,
+            Tag = data.PageType,
+            Icon = new FontIcon { Glyph = data.IconGlyph ?? string.Empty }
+        };
+        AutomationProperties.SetName(item, data.Title);
+        AutomationProperties.SetAutomationId(item, $"Nav{data.PageName}");
+        _navigationItems.Add(data.PageType, item);
+        foreach (var child in data.Items)
+        {
+            item.MenuItems.Add(CreateNavigationItem(child));
+        }
+        return item;
+    }
+
+    private void Navigation_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+    {
+        if (_synchronizingSelection) return;
+        if (args.IsSettingsSelected)
+        {
+            _navigationService.Navigate(typeof(SettingsPage));
+        }
+        else if (args.SelectedItemContainer?.Tag is Type pageType)
+        {
+            _navigationService.Navigate(pageType);
         }
     }
 
-    private void UpdateMainWindowVisuals()
+    private void OnNavigating(object? sender, NavigatingEventArgs args)
     {
-        MainGrid.Margin = default;
-        if(WindowState == WindowState.Maximized)
+        if (args.PageType is not Type pageType)
+            throw new InvalidOperationException("Navigation did not provide a destination page.");
+        _synchronizingSelection = true;
+        try
         {
-            MainGrid.Margin = SystemParameters.HighContrast ? new Thickness(0,8,0,0) : new Thickness(8);
-        }
-
-        UpdateTitleBarButtonsVisibility();
-    
-        if(SystemParameters.HighContrast == true)
-        {
-            HighContrastBorder.SetResourceReference(BorderBrushProperty, IsActive ? SystemColors.ActiveCaptionBrushKey : 
-                                                                                    SystemColors.InactiveCaptionBrushKey);
-            HighContrastBorder.BorderThickness = new Thickness(8, 1, 8, 8);
-        }
-        else
-        {
-            HighContrastBorder.BorderBrush = Brushes.Transparent;
-            HighContrastBorder.BorderThickness = new Thickness(0);
-        }
-
-        if(Utility.IsWindows11OrGreater())
-        {
-            WindowChrome wc = WindowChrome.GetWindowChrome(this);
-            if(wc is not null)
-                wc.NonClientFrameEdges = GetPrefferedNonClientFrameEdges();;
-        }
-    }
-
-    //private void SearchBox_KeyUp(object sender, KeyEventArgs e)
-    //{
-    //    ViewModel.UpdateSearchText(SearchBox.Text);
-    //}
-
-    //private void SearchBox_LostFocus(object sender, RoutedEventArgs e)
-    //{
-    //    SearchBox.Text = "";
-    //    ViewModel.UpdateSearchText(SearchBox.Text);
-    //}
-
-    private void MinimizeWindow(object sender, RoutedEventArgs e)
-    {
-        this.WindowState = WindowState.Minimized;
-    }
-
-    private void MaximizeWindow(object sender, RoutedEventArgs e)
-    {
-        if(this.WindowState == WindowState.Maximized)
-        {
-            this.WindowState = WindowState.Normal;
-            MaximizeIcon.Text = "\uE922";
-        }
-        else
-        {
-            this.WindowState = WindowState.Maximized;
-            MaximizeIcon.Text = "\uE923";
-        }
-    }
-
-    private void CloseWindow(object sender, RoutedEventArgs e)
-    {
-        Application.Current.Shutdown();
-    }
-
-    private void OnNavigating(object? sender, NavigatingEventArgs e)
-    {
-        List<ControlInfoDataItem> list = ViewModel.GetNavigationItemHierarchyFromPageType(e.PageType);
-        
-        if (list.Count > 0)
-        {
-            TreeViewItem selectedTreeViewItem = null;
-            ItemsControl itemsControl = ControlsList;
-            foreach(ControlInfoDataItem item in list)
+            if (pageType == typeof(SettingsPage))
             {
-                var tvi = itemsControl.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
-                if(tvi != null)
+                Navigation.SelectedItem = Navigation.SettingsItem;
+            }
+            else if (_navigationItems.TryGetValue(pageType, out var item))
+            {
+                foreach (var data in ViewModel.GetNavigationItemHierarchyFromPageType(pageType))
                 {
-                    tvi.IsExpanded = true;
-                    tvi.UpdateLayout();
-                    itemsControl = tvi;
-                    selectedTreeViewItem = tvi;
+                    if (_navigationItems.TryGetValue(data.PageType, out var parent))
+                        parent.IsExpanded = true;
                 }
+                Navigation.SelectedItem = item;
             }
-
-            if(selectedTreeViewItem != null)
-            {
-                selectedTreeViewItem.IsSelected = true;
-                ControlsList_SelectedItemChanged();
-            }
+        }
+        finally
+        {
+            _synchronizingSelection = false;
         }
     }
 
-    private void RootContentFrame_Navigated(object sender, NavigationEventArgs e)
+    private void Navigation_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args) =>
+        _navigationService.NavigateBack();
+
+    private void RootContentFrame_Navigated(object sender, NavigationEventArgs args)
     {
+        if (args.Content is Page page)
+            AutomationProperties.SetAutomationId(page, args.SourcePageType.Name);
         ViewModel.UpdateCanNavigateBack();
     }
 
-    private void ControlsList_PreviewKeyDown(object sender, KeyEventArgs e)
+    private void SearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
     {
-        if (e.Key == Key.Enter) 
+        if (args.Reason != AutoSuggestionBoxTextChangeReason.UserInput) return;
+        sender.ItemsSource = _navigationItems.Keys.Select(type =>
+            ViewModel.GetNavigationItemHierarchyFromPageType(type).Last())
+            .Where(item => item.Title.Contains(sender.Text, StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+    }
+
+    private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    {
+        if (args.ChosenSuggestion is ControlInfoDataItem item)
         {
-            SelectedItemChanged(ControlsList.ItemContainerGenerator.ContainerFromItem((sender as TreeView).SelectedItem) as TreeViewItem);
+            _navigationService.Navigate(item.PageType);
         }
-    }
-
-    private void ControlsList_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-    {
-        if (e.OriginalSource is ToggleButton)
+        else
         {
-            return;
+            ViewModel.UpdateSearchText(args.QueryText);
         }
-        SelectedItemChanged(ControlsList.ItemContainerGenerator.ContainerFromItem((sender as TreeView).SelectedItem) as TreeViewItem);
-    }
-
-    private void ControlsList_Loaded(object sender, RoutedEventArgs e)
-    {
-        ResizeNavChevrons();
-        if (ControlsList.Items.Count > 0)
-        {
-            TreeViewItem firstItem = (TreeViewItem)ControlsList.ItemContainerGenerator.ContainerFromItem(ControlsList.Items[0]);
-            if (firstItem != null)
-            {
-                firstItem.IsSelected = true;
-            }
-        }
-    }
-
-    // Thin FontSize-10 chevron anti-aliases to ~2.6:1; enlarging it reaches ~3.9:1 (MAS 1.4.11).
-    private const double NavChevronFontSize = 12d;
-
-    // Size is baked into the sealed template, so set it on each realized top-level chevron glyph.
-    private void ResizeNavChevrons()
-    {
-        foreach (object item in ControlsList.Items)
-        {
-            if (ControlsList.ItemContainerGenerator.ContainerFromItem(item) is TreeViewItem tvi
-                && FindChevronIcon(tvi) is TextBlock chevron)
-            {
-                chevron.FontSize = NavChevronFontSize;
-            }
-        }
-    }
-
-    private static TextBlock? FindChevronIcon(DependencyObject root)
-    {
-        int count = VisualTreeHelper.GetChildrenCount(root);
-        for (int i = 0; i < count; i++)
-        {
-            DependencyObject child = VisualTreeHelper.GetChild(root, i);
-
-            // Each item owns a single chevron in its own header; don't descend into nested items.
-            if (child is TreeViewItem)
-            {
-                continue;
-            }
-
-            if (child is TextBlock { Name: "ChevronIcon" } chevron)
-            {
-                return chevron;
-            }
-
-            if (FindChevronIcon(child) is TextBlock found)
-            {
-                return found;
-            }
-        }
-
-        return null;
-    }
-
-    private void SelectedItemChanged(TreeViewItem? tvi)
-    {
-        ControlsList_SelectedItemChanged();
-        if (tvi != null)
-        {
-            tvi.IsExpanded = !tvi.IsExpanded;
-        }
-    }
-
-    private void ControlsList_SelectedItemChanged()
-    {
-        if (ControlsList.SelectedItem is ControlInfoDataItem navItem)
-        {
-            _navigationService.Navigate(navItem.PageType);
-            var tvi = ControlsList.ItemContainerGenerator.ContainerFromItem(navItem) as TreeViewItem;
-            if(tvi != null)
-            {
-                tvi.BringIntoView();
-            }
-        }
-    }
-
-    private void SettingsButton_Click(object sender, RoutedEventArgs e)
-    {
-        AutomationPeer peer = UIElementAutomationPeer.CreatePeerForElement((Button)sender);
-        peer.RaiseNotificationEvent(
-           AutomationNotificationKind.Other,
-            AutomationNotificationProcessing.ImportantMostRecent,
-            "Settings Page Opened",
-            "ButtonClickedActivity"
-        );
-    }
-
-    private NonClientFrameEdges GetPrefferedNonClientFrameEdges()
-    {
-        if (SystemParameters.HighContrast == true || Utility.IsWindows11OrGreater() == false)
-            return NonClientFrameEdges.None;
-
-        return NonClientFrameEdges.Right | NonClientFrameEdges.Bottom | NonClientFrameEdges.Left;
     }
 }

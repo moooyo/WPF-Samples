@@ -5,20 +5,20 @@
 
 namespace WPFGallery.ViewModels;
 
-public partial class ListBoxPageViewModel : ObservableObject 
+public partial class ListBoxPageViewModel : ObservableObject
 {
-	[ObservableProperty]
-	private string _pageTitle = "ListBox";
-
-	[ObservableProperty]
-	private string _pageDescription = "";
+    [ObservableProperty]
+    public partial string PageTitle { get; set; } = "ListBox";
 
     [ObservableProperty]
-    private ObservableCollection<string> _listBoxItems;
+    public partial string PageDescription { get; set; } = "";
+
+    [ObservableProperty]
+    public partial ObservableCollection<string> ListBoxItems { get; set; }
 
     public ListBoxPageViewModel()
     {
-        _listBoxItems = new ObservableCollection<string>
+        ListBoxItems = new ObservableCollection<string>
         {
             "Arial",
             "Comic Sans MS",

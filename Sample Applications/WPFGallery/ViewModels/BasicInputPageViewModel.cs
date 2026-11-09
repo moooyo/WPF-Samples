@@ -7,13 +7,13 @@ namespace WPFGallery.ViewModels
     public partial class BasicInputPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "Basic Input";
+        public partial string PageTitle { get; set; } = "Basic Input";
 
         [ObservableProperty]
-        private string _pageDescription = "Controls for getting user input";
+        public partial string PageDescription { get; set; } = "Controls for getting user input";
 
         [ObservableProperty]
-        private ICollection<ControlInfoDataItem> _navigationCards = ControlsInfoDataSource.Instance.GetControlsInfo("Basic Input");
+        public partial ICollection<ControlInfoDataItem> NavigationCards { get; set; } = ControlsInfoDataSource.Instance.GetControlsInfo("Basic Input");
 
         private readonly INavigationService _navigationService;
 
@@ -23,13 +23,14 @@ namespace WPFGallery.ViewModels
         }
 
         [RelayCommand]
-        public void Navigate(object pageType){
+        public void Navigate(object pageType)
+        {
             if (pageType is Type page)
             {
                 _navigationService.NavigateTo(page);
             }
         }
 
-        
+
     }
 }

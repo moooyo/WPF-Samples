@@ -3,15 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using WPFGallery.ViewModels;
 
 namespace WPFGallery.Views
@@ -21,6 +12,8 @@ namespace WPFGallery.Views
     /// </summary>
     public partial class ResizeGripPage : Page
     {
+        public ResizeGripPage() : this(App.Services.GetRequiredService<ResizeGripPageViewModel>()) { }
+
         public ResizeGripPage(ResizeGripPageViewModel viewModel)
         {
             ViewModel = viewModel;
@@ -32,20 +25,20 @@ namespace WPFGallery.Views
 
         private void OpenResizeGripWindow_Click(object sender, RoutedEventArgs e)
         {
-            Window window = new Window()
+            var window = new WinUIEx.WindowEx()
             {
                 Width = 500,
                 Height = 300,
-                ResizeMode = ResizeMode.CanResizeWithGrip,
+                IsResizable = true,
                 Content = new TextBlock
                 {
-                    Text = "ResizeGrip is present at the bottom right corner of the window",
+                    Text = "Drag the window edges or corners to resize this WinUI window.",
                     HorizontalAlignment = HorizontalAlignment.Center,
                     VerticalAlignment = VerticalAlignment.Center,
                     FontSize = 16
                 }
             };
-            window.Show();
+            App.ShowSampleWindow(window);
         }
     }
 }

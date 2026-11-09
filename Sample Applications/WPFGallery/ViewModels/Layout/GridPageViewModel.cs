@@ -3,10 +3,10 @@ namespace WPFGallery.ViewModels.Layout
     public partial class GridPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "Grid";
+        public partial string PageTitle { get; set; } = "Grid";
 
         [ObservableProperty]
-        private string _pageDescription = "";
+        public partial string PageDescription { get; set; } = "";
 
         public GridPageViewModel() { }
     }

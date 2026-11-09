@@ -1,13 +1,13 @@
 
 namespace WPFGallery.ViewModels;
 
-public partial class CanvasPageViewModel : ObservableObject 
+public partial class CanvasPageViewModel : ObservableObject
 {
-	[ObservableProperty]
-	private string _pageTitle = "Canvas";
+    [ObservableProperty]
+    public partial string PageTitle { get; set; } = "Canvas";
 
-	[ObservableProperty]
-	private string _pageDescription = "";
+    [ObservableProperty]
+    public partial string PageDescription { get; set; } = "";
 
 
 }

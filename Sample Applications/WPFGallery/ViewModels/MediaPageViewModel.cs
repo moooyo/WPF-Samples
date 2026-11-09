@@ -8,13 +8,13 @@ namespace WPFGallery.ViewModels
     public partial class MediaPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "Media Controls";
+        public partial string PageTitle { get; set; } = "Media Controls";
 
         [ObservableProperty]
-        private string _pageDescription = "Controls for media presentation";
- 
+        public partial string PageDescription { get; set; } = "Controls for media presentation";
+
         [ObservableProperty]
-        private ICollection<ControlInfoDataItem> _navigationCards = ControlsInfoDataSource.Instance.GetControlsInfo("Media");
+        public partial ICollection<ControlInfoDataItem> NavigationCards { get; set; } = ControlsInfoDataSource.Instance.GetControlsInfo("Media");
 
         private readonly INavigationService _navigationService;
 
@@ -24,13 +24,14 @@ namespace WPFGallery.ViewModels
         }
 
         [RelayCommand]
-        public void Navigate(object pageType){
+        public void Navigate(object pageType)
+        {
             if (pageType is Type page)
             {
                 _navigationService.NavigateTo(page);
             }
         }
 
-        
+
     }
 }

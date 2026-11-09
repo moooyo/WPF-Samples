@@ -5,10 +5,10 @@ namespace WPFGallery.ViewModels
     public partial class ColorsPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "Colors";
+        public partial string PageTitle { get; set; } = "Colors";
 
         [ObservableProperty]
-        private string _pageDescription = "Guide showing how to use colors in your app";
+        public partial string PageDescription { get; set; } = "Guide showing how to use colors in your app";
 
     }
 }

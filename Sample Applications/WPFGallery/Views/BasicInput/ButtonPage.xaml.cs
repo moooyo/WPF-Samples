@@ -1,6 +1,3 @@
-﻿using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 
 using WPFGallery.ViewModels;
@@ -13,6 +10,8 @@ namespace WPFGallery.Views
     public partial class ButtonPage : Page
     {
         public ButtonPageViewModel ViewModel { get; }
+
+        public ButtonPage() : this(App.Services.GetRequiredService<ButtonPageViewModel>()) { }
 
         public ButtonPage(ButtonPageViewModel viewModel)
         {

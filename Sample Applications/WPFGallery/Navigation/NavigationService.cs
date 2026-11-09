@@ -1,135 +1,85 @@
-using System.Collections;
-using System.Windows.Navigation;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace WPFGallery.Navigation;
 
-/// <summary>
-/// Interface for the NavigationService
-/// </summary>
 public interface INavigationService
 {
     void Navigate(Type type, bool adjustFocus = true);
-
-    void NavigateTo(Type type);
-
+    void NavigateTo(Type? type);
     void SetFrame(Frame frame);
-
     void NavigateBack();
-
     void NavigateForward();
-
     bool IsBackHistoryNonEmpty();
-
-    event EventHandler<NavigatingEventArgs> Navigating;
+    event EventHandler<NavigatingEventArgs>? Navigating;
 }
 
-/// <summary>
-/// Service for navigating between pages.
-/// </summary>
-public class NavigationService : INavigationService
+public sealed class NavigationService : INavigationService
 {
-    private Frame _frame;
+    private Frame? _frame;
+    private bool _adjustFocus;
 
-    private Type _currentPageType = null;
-
-    private readonly Stack<Type> _history;
-
-    private readonly Stack<Type> _future;
-
-    private readonly IServiceProvider _serviceProvider;
-
-    public event EventHandler<NavigatingEventArgs> Navigating;
-
-
-    public NavigationService(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-        _history = new Stack<Type>();
-        _future = new Stack<Type>();
-    }
+    public event EventHandler<NavigatingEventArgs>? Navigating;
 
     public void SetFrame(Frame frame)
     {
+        if (_frame is not null) _frame.Navigated -= OnNavigated;
         _frame = frame;
+        _frame.Navigated += OnNavigated;
     }
 
-    public void NavigateTo(Type type)
+    public void Navigate(Type type, bool adjustFocus = true)
     {
-        if (type != null)
-        {
-            _future.Clear();
-            RaiseNavigatingEvent(type);
-        }
+        ArgumentNullException.ThrowIfNull(type);
+        var frame = GetFrame();
+        if (frame.CurrentSourcePageType == type) return;
+        _adjustFocus = adjustFocus;
+        if (!frame.Navigate(type))
+            throw new InvalidOperationException($"Navigation to {type.FullName} failed.");
     }
 
-    public void Navigate(Type type, bool adjustFocus)
+    public void NavigateTo(Type? type)
     {
-        if(type != null)
-        {
-            _history.Push(_currentPageType);
-            _currentPageType = type;
-            var page = _serviceProvider.GetRequiredService(type);
-            
-            if(adjustFocus && page is Page pg)
-            {
-                pg.Loaded += MoveFocusToPage;
-            }
-
-            _frame.Navigate(page);
-        }
-    }
-
-    private void MoveFocusToPage(object sender, RoutedEventArgs e)
-    {
-        if(sender is Page page)
-        {
-            page.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
-            page.Loaded -= MoveFocusToPage;
-        }
+        if (type is not null) Navigate(type);
     }
 
     public void NavigateBack()
     {
-        if(_history.Count > 0)
+        var frame = GetFrame();
+        if (frame.CanGoBack)
         {
-            Type type = _history.Pop();
-            if (type != null)
-            {
-                _future.Push(type);
-                RaiseNavigatingEvent(type);
-                _history.Pop();
-            }
+            _adjustFocus = true;
+            frame.GoBack();
         }
     }
 
     public void NavigateForward()
     {
-        if(_future.Count > 0)
+        var frame = GetFrame();
+        if (frame.CanGoForward)
         {
-            Type type = _future.Pop();
-            if (type != null)
-            {
-                _history.Push(type);
-                RaiseNavigatingEvent(type);
-            }
+            _adjustFocus = true;
+            frame.GoForward();
         }
     }
 
-    public void RaiseNavigatingEvent(Type type)
+    public bool IsBackHistoryNonEmpty() => _frame?.CanGoBack == true;
+
+    private Frame GetFrame() => _frame ?? throw new InvalidOperationException("The navigation frame is not initialized.");
+
+    private void OnNavigated(object sender, NavigationEventArgs args)
     {
-        Navigating?.Invoke(this, new NavigatingEventArgs(type));
+        Navigating?.Invoke(this, new NavigatingEventArgs(args.SourcePageType));
+        if (_adjustFocus && args.Content is Page page)
+        {
+            page.Loaded += MoveFocusToPage;
+        }
     }
 
-    public bool IsBackHistoryNonEmpty()
+    private static void MoveFocusToPage(object sender, RoutedEventArgs args)
     {
-        var item = _history.Peek();
-        if (item == null)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        var page = (Page)sender;
+        page.Loaded -= MoveFocusToPage;
+        if (FocusManager.FindFirstFocusableElement(page) is Control control)
+            control.Focus(FocusState.Programmatic);
     }
 }

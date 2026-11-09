@@ -1,6 +1,3 @@
-﻿using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using WPFGallery.ViewModels;
 
@@ -11,14 +8,16 @@ namespace WPFGallery.Views
     /// </summary>
     public partial class ImagePage : Page
     {
-    public ImagePageViewModel ViewModel { get; }
+        public ImagePageViewModel ViewModel { get; }
 
-    public ImagePage(ImagePageViewModel viewModel)
-    {
-        ViewModel = viewModel;
-        DataContext = this;
+        public ImagePage() : this(App.Services.GetRequiredService<ImagePageViewModel>()) { }
 
-        InitializeComponent();
-    }
+        public ImagePage(ImagePageViewModel viewModel)
+        {
+            ViewModel = viewModel;
+            DataContext = this;
+
+            InitializeComponent();
+        }
     }
 }

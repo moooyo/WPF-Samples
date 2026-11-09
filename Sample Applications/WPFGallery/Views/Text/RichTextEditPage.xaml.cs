@@ -1,6 +1,3 @@
-﻿using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using WPFGallery.ViewModels;
 
@@ -12,10 +9,12 @@ namespace WPFGallery.Views
     public partial class RichTextEditPage : Page
     {
         public RichTextEditPageViewModel ViewModel { get; }
-public RichTextEditPage(RichTextEditPageViewModel viewModel)
+        public RichTextEditPage() : this(App.Services.GetRequiredService<RichTextEditPageViewModel>()) { }
+
+        public RichTextEditPage(RichTextEditPageViewModel viewModel)
         {
-ViewModel = viewModel;
-DataContext = this;
+            ViewModel = viewModel;
+            DataContext = this;
             InitializeComponent();
         }
     }

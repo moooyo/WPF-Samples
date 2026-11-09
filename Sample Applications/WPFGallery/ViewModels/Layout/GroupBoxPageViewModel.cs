@@ -7,10 +7,10 @@ namespace WPFGallery.ViewModels
     public partial class GroupBoxPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "GroupBox";
+        public partial string PageTitle { get; set; } = "GroupBox";
 
         [ObservableProperty]
-        private string _pageDescription = "";
+        public partial string PageDescription { get; set; } = "";
 
         public GroupBoxPageViewModel() { }
     }

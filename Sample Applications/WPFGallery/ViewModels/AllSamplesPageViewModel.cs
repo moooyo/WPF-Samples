@@ -7,13 +7,13 @@ namespace WPFGallery.ViewModels
     public partial class AllSamplesPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "All Controls";
+        public partial string PageTitle { get; set; } = "All Controls";
 
         [ObservableProperty]
-        private string _pageDescription = "";
+        public partial string PageDescription { get; set; } = "";
 
         [ObservableProperty]
-        private ICollection<ControlInfoDataItem> _navigationCards = ControlsInfoDataSource.Instance.GetAllControlsInfo();
+        public partial ICollection<ControlInfoDataItem> NavigationCards { get; set; } = ControlsInfoDataSource.Instance.GetAllControlsInfo();
         private readonly INavigationService _navigationService;
 
         public AllSamplesPageViewModel(INavigationService navigationService)

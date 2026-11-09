@@ -6,24 +6,24 @@
 namespace WPFGallery.ViewModels;
 
 
-public partial class SliderPageViewModel : ObservableObject 
+public partial class SliderPageViewModel : ObservableObject
 {
-	[ObservableProperty]
-	private string _pageTitle = "Slider";
-
-	[ObservableProperty]
-	private string _pageDescription = "";
+    [ObservableProperty]
+    public partial string PageTitle { get; set; } = "Slider";
 
     [ObservableProperty]
-    private int _simpleSliderValue = 0;
+    public partial string PageDescription { get; set; } = "";
 
     [ObservableProperty]
-    private int _rangeSliderValue = 500;
+    public partial int SimpleSliderValue { get; set; } = 0;
 
     [ObservableProperty]
-    private int _marksSliderValue = 0;
+    public partial int RangeSliderValue { get; set; } = 500;
 
     [ObservableProperty]
-    private int _verticalSliderValue = 0;
+    public partial int MarksSliderValue { get; set; } = 0;
+
+    [ObservableProperty]
+    public partial int VerticalSliderValue { get; set; } = 0;
 }
 

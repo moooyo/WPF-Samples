@@ -1,13 +1,13 @@
 ﻿
 namespace WPFGallery.ViewModels
 {
-    public partial class RichTextEditPageViewModel : ObservableObject 
-{
-	[ObservableProperty]
-	private string _pageTitle = "RichTextEdit";
+    public partial class RichTextEditPageViewModel : ObservableObject
+    {
+        [ObservableProperty]
+        public partial string PageTitle { get; set; } = "RichTextEdit";
 
-	[ObservableProperty]
-	private string _pageDescription = "";
+        [ObservableProperty]
+        public partial string PageDescription { get; set; } = "";
 
     }
 }

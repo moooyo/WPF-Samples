@@ -10,6 +10,8 @@ namespace WPFGallery.Views
     {
         public MenuPageViewModel ViewModel { get; }
 
+        public MenuPage() : this(App.Services.GetRequiredService<MenuPageViewModel>()) { }
+
         public MenuPage(MenuPageViewModel viewModel)
         {
             ViewModel = viewModel;
@@ -20,21 +22,9 @@ namespace WPFGallery.Views
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuItem menuItem)
+            if (sender is MenuFlyoutItem menuItem)
             {
-                if (e.OriginalSource is MenuItem originalMenuItem && originalMenuItem == menuItem)
-                {
-                    StatusMenuItem.Visibility = Visibility.Visible;
-                    StatusMenuItem.Text = (menuItem.Tag != null) ? $"You pressed {menuItem.Tag}" : $"You pressed {menuItem.Header}";
-                }
-                if (menuItem.Parent is MenuItem parentMenuItem)
-                {
-                    parentMenuItem.Focus();
-                }
-                else
-                {
-                    menuItem.Focus();
-                }
+                StatusMenuItem.Text = $"You pressed {menuItem.Text}";
             }
         }
     }

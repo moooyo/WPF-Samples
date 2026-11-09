@@ -1,6 +1,3 @@
-﻿using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using WPFGallery.ViewModels;
 
@@ -12,7 +9,9 @@ namespace WPFGallery.Views
     public partial class ListViewPage : Page
     {
         public ListViewPageViewModel ViewModel { get; }
-    
+
+        public ListViewPage() : this(App.Services.GetRequiredService<ListViewPageViewModel>()) { }
+
         public ListViewPage(ListViewPageViewModel viewModel)
         {
             ViewModel = viewModel;

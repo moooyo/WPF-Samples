@@ -7,13 +7,13 @@ namespace WPFGallery.Helpers;
 /// </summary>
 internal sealed class ImageIdToBrushConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object value, Type targetType, object parameter, string language)
     {
         string imageKey = (string)value;
         return Application.Current.Resources[imageKey];
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
         throw new NotImplementedException();
     }

@@ -9,30 +9,29 @@
     x:Class="WPFGallery.Views.ClipboardPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="clr-namespace:WPFGallery.Controls"
+    xmlns:controls="using:WPFGallery.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:WPFGallery.Views"
+    xmlns:local="using:WPFGallery.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="ClipboardPage"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
 
-    <Grid x:Name="ContentPagePane" Height="Auto">
+    <Grid x:Name="ContentPagePane">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        
-        <controls:PageHeader Grid.Row="0" Margin="0,0,0,32" Title="{Binding ViewModel.PageTitle}" ShowDescription="False" />
-        
-        <Border Grid.Row="1" 
-                Background="{DynamicResource SubtleFillColorSecondaryBrush}" 
-                BorderBrush="{DynamicResource AccentFillColorDefaultBrush}" 
-                BorderThickness="1" 
+
+        <controls:PageHeader Grid.Row="0" Margin="0,0,0,32" Title="{x:Bind ViewModel.PageTitle, Mode=OneWay}" ShowDescription="False" />
+
+        <Border Grid.Row="1"
+                Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                BorderBrush="{ThemeResource AccentFillColorDefaultBrush}"
+                BorderThickness="1"
                 CornerRadius="4"
                 Padding="16,12"
                 Margin="0,0,0,16">
@@ -41,25 +40,24 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                
-                <TextBlock Grid.Column="0" 
+
+                <TextBlock Grid.Column="0"
                            FontFamily="{StaticResource SymbolThemeFontFamily}"
                            FontSize="16"
                            Text="&#xE946;"
                            AutomationProperties.Name="Info"
-                           Foreground="{DynamicResource AccentFillColorDefaultBrush}"
+                           Foreground="{ThemeResource AccentFillColorDefaultBrush}"
                            VerticalAlignment="Top"
                            Margin="0,2,12,0" />
-                
-                <TextBlock Grid.Column="1" 
-                           TextWrapping="Wrap" 
+
+                <TextBlock Grid.Column="1"
+                           TextWrapping="Wrap"
                            VerticalAlignment="Center"
-                           Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+                           Foreground="{ThemeResource TextFillColorPrimaryBrush}">
                     <Run FontWeight="SemiBold">Note:</Run>
-                    <Run Text=" Since .NET 9, few of the Clipboard APIs have become obsolete. For more information please read " />
-                    <Hyperlink NavigateUri="https://learn.microsoft.com/en-us/dotnet/desktop/winforms/migration/clipboard-dataobject-net10" 
-                               RequestNavigate="Hyperlink_RequestNavigate">
-                        <Run Text="here" />
+                    <Run Text=" This page uses Windows DataTransfer for clipboard text and images. Reads are asynchronous. See the " />
+                    <Hyperlink NavigateUri="https://learn.microsoft.com/en-us/uwp/api/windows.applicationmodel.datatransfer.clipboard">
+                        <Run Text="Clipboard API documentation" />
                     </Hyperlink>
                     <Run Text="." />
                 </TextBlock>
@@ -71,22 +69,22 @@
                 <controls:ControlExample
                     Margin="10"
                     HeaderText="Copy text to Clipboard"
-                    XamlCode="&lt;Button Content=&quot;Copy to Clipboard&quot; Click=&quot;CopyToClipboard_Click&quot; /&gt;"
-                    CSharpCode="private void CopyToClipboard_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    Clipboard.SetText(textToCopy);&#x0a;}">
+                    XamlCode="&lt;StackPanel&gt;&#10;    &lt;TextBox AutomationProperties.AutomationId=&quot;CopyTextBox&quot; &#10;        x:Name=&quot;CopyTextBox&quot;&#10;        Text=&quot;Hello, Clipboard!&quot;&#10;        AutomationProperties.Name=&quot;Copy To Clipboard TextBox&quot;&#10;        Margin=&quot;0,0,0,10&quot;&#10;        Width=&quot;300&quot;&#10;        HorizontalAlignment=&quot;Left&quot; /&gt;&#10;    &lt;Button AutomationProperties.AutomationId=&quot;CopyToClipboard_Click&quot; &#10;        Content=&quot;Copy to Clipboard&quot; &#10;        Click=&quot;CopyToClipboard_Click&quot;&#10;        Margin=&quot;0,0,0,10&quot; /&gt;&#10;    &lt;TextBlock &#10;        Text=&quot;{x:Bind ViewModel.CopyStatus, Mode=OneWay}&quot;&#10;        TextWrapping=&quot;Wrap&quot; /&gt;&#10;&lt;/StackPanel&gt;"
+                    CSharpCode="private void CopyToClipboard_Click(object sender, RoutedEventArgs args)&#10;    {&#10;        var text = CopyTextBox.Text;&#10;        if (string.IsNullOrEmpty(text))&#10;        {&#10;            ViewModel.CopyStatus = &quot;Nothing to copy - text box is empty.&quot;;&#10;            return;&#10;        }&#10;        _clipboard.CopyText(text);&#10;        ViewModel.CopyStatus = $&quot;Copied \&quot;{text}\&quot; to clipboard!&quot;;&#10;    }">
                     <StackPanel>
-                        <TextBox 
+                        <TextBox AutomationProperties.AutomationId="CopyTextBox"
                             x:Name="CopyTextBox"
                             Text="Hello, Clipboard!"
                             AutomationProperties.Name="Copy To Clipboard TextBox"
                             Margin="0,0,0,10"
                             Width="300"
                             HorizontalAlignment="Left" />
-                        <Button 
-                            Content="Copy to Clipboard" 
+                        <Button AutomationProperties.AutomationId="CopyToClipboard_Click"
+                            Content="Copy to Clipboard"
                             Click="CopyToClipboard_Click"
                             Margin="0,0,0,10" />
-                        <TextBlock 
-                            Text="{Binding ViewModel.CopyStatus}"
+                        <TextBlock
+                            Text="{x:Bind ViewModel.CopyStatus, Mode=OneWay}"
                             TextWrapping="Wrap" />
                     </StackPanel>
                 </controls:ControlExample>
@@ -94,17 +92,16 @@
                 <controls:ControlExample
                     Margin="10,32,10,10"
                     HeaderText="Paste text from Clipboard"
-                    XamlCode="&lt;Button Content=&quot;Paste from Clipboard&quot; Click=&quot;PasteFromClipboard_Click&quot; /&gt;"
-                    CSharpCode="private void PasteFromClipboard_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    if (Clipboard.ContainsText())&#x0a;    {&#x0a;        string text = Clipboard.GetText();&#x0a;    }&#x0a;}">
+                    XamlCode="&lt;StackPanel&gt;&#10;    &lt;Button AutomationProperties.AutomationId=&quot;PasteFromClipboard_Click&quot; &#10;        Content=&quot;Paste from Clipboard&quot; &#10;        Click=&quot;PasteFromClipboard_Click&quot;&#10;        Margin=&quot;0,0,0,10&quot; /&gt;&#10;    &lt;TextBlock Text=&quot;Pasted Content:&quot; FontWeight=&quot;SemiBold&quot; Margin=&quot;0,0,0,5&quot; /&gt;&#10;    &lt;TextBox AutomationProperties.AutomationId=&quot;PasteTextBox&quot; &#10;        x:Name=&quot;PasteTextBox&quot;&#10;        Text=&quot;{x:Bind ViewModel.PastedText, Mode=TwoWay}&quot;&#10;        AutomationProperties.Name=&quot;Paste content textbox&quot;&#10;        IsReadOnly=&quot;True&quot;&#10;        TextWrapping=&quot;Wrap&quot;&#10;        MinHeight=&quot;60&quot;&#10;        Width=&quot;300&quot;&#10;        HorizontalAlignment=&quot;Left&quot; /&gt;&#10;&lt;/StackPanel&gt;">
                     <StackPanel>
-                        <Button 
-                            Content="Paste from Clipboard" 
+                        <Button AutomationProperties.AutomationId="PasteFromClipboard_Click"
+                            Content="Paste from Clipboard"
                             Click="PasteFromClipboard_Click"
                             Margin="0,0,0,10" />
                         <TextBlock Text="Pasted Content:" FontWeight="SemiBold" Margin="0,0,0,5" />
-                        <TextBox 
+                        <TextBox AutomationProperties.AutomationId="PasteTextBox"
                             x:Name="PasteTextBox"
-                            Text="{Binding ViewModel.PastedText, Mode=TwoWay}"
+                            Text="{x:Bind ViewModel.PastedText, Mode=TwoWay}"
                             AutomationProperties.Name="Paste content textbox"
                             IsReadOnly="True"
                             TextWrapping="Wrap"
@@ -117,15 +114,15 @@
                 <controls:ControlExample
                     Margin="10,32,10,10"
                     HeaderText="Clear Clipboard"
-                    XamlCode="&lt;Button Content=&quot;Clear Clipboard&quot; Click=&quot;ClearClipboard_Click&quot; /&gt;"
-                    CSharpCode="private void ClearClipboard_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    Clipboard.Clear();&#x0a;}">
+                    XamlCode="&lt;StackPanel&gt;&#10;    &lt;Button AutomationProperties.AutomationId=&quot;ClearClipboard_Click&quot; &#10;        Content=&quot;Clear Clipboard&quot; &#10;        Click=&quot;ClearClipboard_Click&quot;&#10;        Margin=&quot;0,0,0,10&quot; /&gt;&#10;    &lt;TextBlock &#10;        Text=&quot;{x:Bind ViewModel.ClearStatus, Mode=OneWay}&quot;&#10;        TextWrapping=&quot;Wrap&quot; /&gt;&#10;&lt;/StackPanel&gt;"
+                    CSharpCode="private void ClearClipboard_Click(object sender, RoutedEventArgs args)&#10;    {&#10;        _clipboard.Clear();&#10;        ViewModel.ClearStatus = &quot;Clipboard cleared!&quot;;&#10;        ViewModel.PastedText = &quot;&quot;;&#10;    }">
                     <StackPanel>
-                        <Button 
-                            Content="Clear Clipboard" 
+                        <Button AutomationProperties.AutomationId="ClearClipboard_Click"
+                            Content="Clear Clipboard"
                             Click="ClearClipboard_Click"
                             Margin="0,0,0,10" />
-                        <TextBlock 
-                            Text="{Binding ViewModel.ClearStatus}"
+                        <TextBlock
+                            Text="{x:Bind ViewModel.ClearStatus, Mode=OneWay}"
                             TextWrapping="Wrap" />
                     </StackPanel>
                 </controls:ControlExample>
@@ -133,15 +130,14 @@
                 <controls:ControlExample
                     Margin="10,32,10,10"
                     HeaderText="Check Clipboard data formats"
-                    XamlCode="&lt;Button Content=&quot;Check Formats&quot; Click=&quot;CheckFormats_Click&quot; /&gt;"
-                    CSharpCode="private void CheckFormats_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    bool hasText = Clipboard.ContainsText();&#x0a;    bool hasImage = Clipboard.ContainsImage();&#x0a;    bool hasFileDropList = Clipboard.ContainsFileDropList();&#x0a;}">
+                    XamlCode="&lt;StackPanel&gt;&#10;    &lt;Button AutomationProperties.AutomationId=&quot;CheckFormats_Click&quot; &#10;        Content=&quot;Check Clipboard Formats&quot; &#10;        Click=&quot;CheckFormats_Click&quot;&#10;        Margin=&quot;0,0,0,10&quot; /&gt;&#10;    &lt;TextBlock &#10;        Text=&quot;{x:Bind ViewModel.FormatsInfo, Mode=OneWay}&quot;&#10;        TextWrapping=&quot;Wrap&quot; /&gt;&#10;&lt;/StackPanel&gt;">
                     <StackPanel>
-                        <Button 
-                            Content="Check Clipboard Formats" 
+                        <Button AutomationProperties.AutomationId="CheckFormats_Click"
+                            Content="Check Clipboard Formats"
                             Click="CheckFormats_Click"
                             Margin="0,0,0,10" />
-                        <TextBlock 
-                            Text="{Binding ViewModel.FormatsInfo}"
+                        <TextBlock
+                            Text="{x:Bind ViewModel.FormatsInfo, Mode=OneWay}"
                             TextWrapping="Wrap" />
                     </StackPanel>
                 </controls:ControlExample>
@@ -149,22 +145,22 @@
                 <controls:ControlExample
                     Margin="10,32,10,10"
                     HeaderText="Copy image to Clipboard"
-                    XamlCode="&lt;Button Content=&quot;Copy Image&quot; Click=&quot;CopyImageToClipboard_Click&quot; /&gt;"
-                    CSharpCode="private void CopyImageToClipboard_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    Clipboard.SetImage(bitmapSource);&#x0a;}">
+                    XamlCode="&lt;StackPanel&gt;&#10;    &lt;Image &#10;        x:Name=&quot;SourceImage&quot;&#10;        Source=&quot;ms-appx:///Assets/ControlImages/Clipboard.png&quot;&#10;        Width=&quot;100&quot;&#10;        Height=&quot;100&quot;&#10;        HorizontalAlignment=&quot;Left&quot;&#10;        Margin=&quot;0,0,0,10&quot; /&gt;&#10;    &lt;Button AutomationProperties.AutomationId=&quot;CopyImageToClipboard_Click&quot; &#10;        Content=&quot;Copy Image to Clipboard&quot; &#10;        Click=&quot;CopyImageToClipboard_Click&quot;&#10;        Margin=&quot;0,0,0,10&quot; /&gt;&#10;    &lt;TextBlock &#10;        Text=&quot;{x:Bind ViewModel.CopyImageStatus, Mode=OneWay}&quot;&#10;        TextWrapping=&quot;Wrap&quot; /&gt;&#10;&lt;/StackPanel&gt;"
+                    CSharpCode="private void CopyImageToClipboard_Click(object sender, RoutedEventArgs args)&#10;    {&#10;        if (SourceImage.Source is BitmapImage { UriSource: { } source })&#10;        {&#10;            _clipboard.CopyImage(source);&#10;            ViewModel.CopyImageStatus = &quot;Image copied to clipboard!&quot;;&#10;        }&#10;        else&#10;        {&#10;            ViewModel.CopyImageStatus = &quot;Failed to copy image.&quot;;&#10;        }&#10;    }">
                     <StackPanel>
-                        <Image 
+                        <Image
                             x:Name="SourceImage"
-                            Source="pack://application:,,,/Assets/ControlImages/Clipboard.png"
+                            Source="ms-appx:///Assets/ControlImages/Clipboard.png"
                             Width="100"
                             Height="100"
                             HorizontalAlignment="Left"
                             Margin="0,0,0,10" />
-                        <Button 
-                            Content="Copy Image to Clipboard" 
+                        <Button AutomationProperties.AutomationId="CopyImageToClipboard_Click"
+                            Content="Copy Image to Clipboard"
                             Click="CopyImageToClipboard_Click"
                             Margin="0,0,0,10" />
-                        <TextBlock 
-                            Text="{Binding ViewModel.CopyImageStatus}"
+                        <TextBlock
+                            Text="{x:Bind ViewModel.CopyImageStatus, Mode=OneWay}"
                             TextWrapping="Wrap" />
                     </StackPanel>
                 </controls:ControlExample>
@@ -172,27 +168,27 @@
                 <controls:ControlExample
                     Margin="10,32,10,10"
                     HeaderText="Paste image from Clipboard"
-                    XamlCode="&lt;Button Content=&quot;Paste Image&quot; Click=&quot;PasteImageFromClipboard_Click&quot; /&gt;"
-                    CSharpCode="private void PasteImageFromClipboard_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    if (Clipboard.ContainsImage())&#x0a;    {&#x0a;        BitmapSource image = Clipboard.GetImage();&#x0a;    }&#x0a;}">
+                    XamlCode="&lt;StackPanel&gt;&#10;    &lt;Button AutomationProperties.AutomationId=&quot;PasteImageFromClipboard_Click&quot; &#10;        Content=&quot;Paste Image from Clipboard&quot; &#10;        Click=&quot;PasteImageFromClipboard_Click&quot;&#10;        Margin=&quot;0,0,0,10&quot; /&gt;&#10;    &lt;TextBlock Text=&quot;Pasted Image:&quot; FontWeight=&quot;SemiBold&quot; Margin=&quot;0,0,0,5&quot; /&gt;&#10;    &lt;Border &#10;        BorderBrush=&quot;Gray&quot; &#10;        BorderThickness=&quot;1&quot; &#10;        Width=&quot;200&quot; &#10;        Height=&quot;200&quot; &#10;        HorizontalAlignment=&quot;Left&quot;&gt;&#10;        &lt;Image &#10;            x:Name=&quot;PastedImage&quot;&#10;            Stretch=&quot;Uniform&quot; &#10;            Visibility=&quot;Collapsed&quot;/&gt;&#10;    &lt;/Border&gt;&#10;    &lt;TextBlock &#10;        Text=&quot;{x:Bind ViewModel.PasteImageStatus, Mode=OneWay}&quot;&#10;        Margin=&quot;0,10,0,0&quot;&#10;        TextWrapping=&quot;Wrap&quot; /&gt;&#10;&lt;/StackPanel&gt;"
+                    CSharpCode="private async void PasteImageFromClipboard_Click(object sender, RoutedEventArgs args)&#10;    {&#10;        var image = await _clipboard.ReadImageAsync();&#10;        PastedImage.Source = image;&#10;        PastedImage.Visibility = image is null ? Visibility.Collapsed : Visibility.Visible;&#10;        ViewModel.PasteImageStatus = image is null&#10;            ? &quot;No image in clipboard.&quot; : $&quot;Image pasted! Size: {image.PixelWidth}x{image.PixelHeight}&quot;;&#10;    }">
                     <StackPanel>
-                        <Button 
-                            Content="Paste Image from Clipboard" 
+                        <Button AutomationProperties.AutomationId="PasteImageFromClipboard_Click"
+                            Content="Paste Image from Clipboard"
                             Click="PasteImageFromClipboard_Click"
                             Margin="0,0,0,10" />
                         <TextBlock Text="Pasted Image:" FontWeight="SemiBold" Margin="0,0,0,5" />
-                        <Border 
-                            BorderBrush="Gray" 
-                            BorderThickness="1" 
-                            Width="200" 
-                            Height="200" 
+                        <Border
+                            BorderBrush="Gray"
+                            BorderThickness="1"
+                            Width="200"
+                            Height="200"
                             HorizontalAlignment="Left">
-                            <Image 
+                            <Image
                                 x:Name="PastedImage"
-                                Stretch="Uniform" 
+                                Stretch="Uniform"
                                 Visibility="Collapsed"/>
                         </Border>
-                        <TextBlock 
-                            Text="{Binding ViewModel.PasteImageStatus}"
+                        <TextBlock
+                            Text="{x:Bind ViewModel.PasteImageStatus, Mode=OneWay}"
                             Margin="0,10,0,0"
                             TextWrapping="Wrap" />
                     </StackPanel>

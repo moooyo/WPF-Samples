@@ -1,20 +1,19 @@
 ﻿<Page x:Class="WPFGallery.Views.SignalSection"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:WPFGallery.Views"
-      xmlns:controls="clr-namespace:WPFGallery.Controls"
-      mc:Ignorable="d" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:WPFGallery.Views"
+      xmlns:controls="using:WPFGallery.Controls"
+      mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
-      Foreground="{DynamicResource WindowForeground}"
-      Title="SignalSection">
+      Foreground="{ThemeResource TextFillColorPrimaryBrush}">
 
     <StackPanel>
         <!--  System  -->
     <controls:ColorPageExample
             Title="System"
-            Background="{DynamicResource SolidBackgroundFillColorQuarternaryBrush}"
+            Background="{ThemeResource SolidBackgroundFillColorQuarternaryBrush}"
             Description="Used for accent fills on controls">
     </controls:ColorPageExample>
 
@@ -24,34 +23,34 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-           
+
             <controls:ColorTile
-                Background="{DynamicResource SystemFillColorSuccessBrush}"
+                Background="{ThemeResource SystemFillColorSuccessBrush}"
                 ColorBrushName="SystemFillColorSuccessBrush"
                 ColorExplanation="Badge"
                 TileRadius="8,0,0,8"
                 ColorName="System / Success"
                 ColorValue="#6CCB5F, 100%"
-                Foreground="{DynamicResource TextFillColorInverseBrush}"
+                Foreground="{ThemeResource TextFillColorInverseBrush}"
                 ShowSeparator="False" />
             <controls:ColorTile
                 Grid.Column="1"
-                Background="{DynamicResource SystemFillColorCautionBrush}"
+                Background="{ThemeResource SystemFillColorCautionBrush}"
                 ColorBrushName="SystemFillColorCautionBrush"
                 ColorExplanation="Badge"
                 ColorName="System / Caution"
                 ColorValue="FCE100, 100%"
-                Foreground="{DynamicResource TextFillColorInverseBrush}"
+                Foreground="{ThemeResource TextFillColorInverseBrush}"
                 ShowSeparator="False" />
             <controls:ColorTile
-                Background="{DynamicResource SystemFillColorCriticalBrush}"
+                Background="{ThemeResource SystemFillColorCriticalBrush}"
                 Grid.Column="2"
                 ColorBrushName="SystemFillColorCriticalBrush"
                 ColorExplanation="Badge"
                 TileRadius="0,8,8,0"
                 ColorName="System / Critical"
                 ColorValue="#FF99A4, 100%"
-                Foreground="{DynamicResource TextFillColorInverseBrush}"
+                Foreground="{ThemeResource TextFillColorInverseBrush}"
                 ShowSeparator="False" />
         </Grid></Border>
         <Border Style="{StaticResource ColorTilesPanelStyle}" Margin="0,8"><Grid>
@@ -60,10 +59,10 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            
+
             <controls:ColorTile
                 Grid.Column="0"
-                Background="{DynamicResource SystemFillColorSuccessBackgroundBrush}"
+                Background="{ThemeResource SystemFillColorSuccessBackgroundBrush}"
                 ColorBrushName="SystemFillColorSuccessBackgroundBrush"
                 TileRadius="8,0,0,8"
                 ColorExplanation="Infobar Background"
@@ -72,14 +71,14 @@
                 ShowSeparator="False" />
             <controls:ColorTile
                 Grid.Column="1"
-                Background="{DynamicResource SystemFillColorCautionBackgroundBrush}"
+                Background="{ThemeResource SystemFillColorCautionBackgroundBrush}"
                 ColorBrushName="SystemFillColorCautionBackgroundBrush"
                 ColorExplanation="Infobar Background"
                 ColorName="System / Caution Background"
                 ColorValue="#433519, 100%"
                 ShowSeparator="False" />
             <controls:ColorTile
-                Background="{DynamicResource SystemFillColorCriticalBackgroundBrush}"
+                Background="{ThemeResource SystemFillColorCriticalBackgroundBrush}"
                 ColorBrushName="SystemFillColorCriticalBackgroundBrush"
                 ColorExplanation="Infobar Background"
                 TileRadius="0,8,8,0"
@@ -96,35 +95,35 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <controls:ColorTile
-                Background="{DynamicResource SystemFillColorAttentionBrush}"
+                Background="{ThemeResource SystemFillColorAttentionBrush}"
                 ColorBrushName="SystemFillColorAttentionBrush"
                 ColorExplanation="Badge"
                 TileRadius="8,0,0,8"
                 ColorName="System / Attention"
                 ColorValue="#60CDFF (100%)"
-                Foreground="{DynamicResource TextFillColorInverseBrush}"
+                Foreground="{ThemeResource TextFillColorInverseBrush}"
                 ShowSeparator="False" />
-          
+
             <controls:ColorTile
                 Grid.Column="1"
-                Background="{DynamicResource SystemFillColorNeutralBrush}"
+                Background="{ThemeResource SystemFillColorNeutralBrush}"
                 ColorBrushName="SystemFillColorNeutralBrush"
                 ColorExplanation="Badge"
                 ColorName="System / Neutral"
                 ColorValue="#FFFFFF (8B, 54,42%)"
-                Foreground="{DynamicResource TextFillColorInverseBrush}" 
+                Foreground="{ThemeResource TextFillColorInverseBrush}"
                 ShowSeparator="True"/>
 
 
             <controls:ColorTile
                 Grid.Column="2"
-                Background="{DynamicResource SystemFillColorSolidNeutralBrush}"
+                Background="{ThemeResource SystemFillColorSolidNeutralBrush}"
                 ColorBrushName="SystemFillColorSolidNeutralBrush"
                 ColorExplanation="Neutral badges over content"
                 TileRadius="0,8,8,0"
                 ColorName="System / Solid Neutral"
                 ColorValue="#9D9D9D"
-                Foreground="{DynamicResource TextFillColorInverseBrush}"
+                Foreground="{ThemeResource TextFillColorInverseBrush}"
                 ShowSeparator="False" />
 
         </Grid></Border>
@@ -135,7 +134,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <controls:ColorTile
-                Background="{DynamicResource SystemFillColorAttentionBackgroundBrush}"
+                Background="{ThemeResource SystemFillColorAttentionBackgroundBrush}"
                 ColorBrushName="SystemFillColorAttentionBackgroundBrush"
                 TileRadius="8,0,0,8"
                 ColorExplanation="Infobar Background"
@@ -143,14 +142,14 @@
                 ColorValue="#FFFFFF (0B, 3.26%)"/>
             <controls:ColorTile
                 Grid.Column="1"
-                Background="{DynamicResource SystemFillColorNeutralBackgroundBrush}"
+                Background="{ThemeResource SystemFillColorNeutralBackgroundBrush}"
                 ColorBrushName="SystemFillColorNeutralBackgroundBrush"
                 ColorExplanation="Infobar Background"
                 ColorName="System / Neutral Background"
                 ColorValue="#FFFFFF (08, 3.26%)" />
             <controls:ColorTile
                 Grid.Column="2"
-                Background="{DynamicResource SystemFillColorSolidNeutralBackgroundBrush}"
+                Background="{ThemeResource SystemFillColorSolidNeutralBackgroundBrush}"
                 ColorBrushName="SystemFillColorSolidNeutralBackgroundBrush"
                 TileRadius="0,8,8,0"
                 ColorExplanation="Neutral badges over content"
@@ -163,7 +162,7 @@
             </Grid.ColumnDefinitions>
             <controls:ColorTile
                 Grid.Column="2"
-                Background="{DynamicResource SystemFillColorSolidAttentionBackgroundBrush}"
+                Background="{ThemeResource SystemFillColorSolidAttentionBackgroundBrush}"
                 ColorBrushName="SystemFillColorSolidAttentionBackgroundBrush"
                 TileRadius="8,8,8,8"
                 ColorName="System / Solid Attention Background"

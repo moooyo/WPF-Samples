@@ -7,13 +7,13 @@ namespace WPFGallery.ViewModels
     public partial class LayoutPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "Layout";
+        public partial string PageTitle { get; set; } = "Layout";
 
         [ObservableProperty]
-        private string _pageDescription = "Controls for layouting";
+        public partial string PageDescription { get; set; } = "Controls for layouting";
 
         [ObservableProperty]
-        private ICollection<ControlInfoDataItem> _navigationCards = ControlsInfoDataSource.Instance.GetControlsInfo("Layout");
+        public partial ICollection<ControlInfoDataItem> NavigationCards { get; set; } = ControlsInfoDataSource.Instance.GetControlsInfo("Layout");
 
         private readonly INavigationService _navigationService;
 
@@ -23,13 +23,14 @@ namespace WPFGallery.ViewModels
         }
 
         [RelayCommand]
-        public void Navigate(object pageType){
+        public void Navigate(object pageType)
+        {
             if (pageType is Type page)
             {
                 _navigationService.NavigateTo(page);
             }
         }
 
-        
+
     }
 }

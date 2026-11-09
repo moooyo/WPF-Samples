@@ -1,31 +1,31 @@
 
 namespace WPFGallery.ViewModels;
 
-public partial class ClipboardPageViewModel : ObservableObject 
+public partial class ClipboardPageViewModel : ObservableObject
 {
     [ObservableProperty]
-    private string _pageTitle = "Clipboard";
+    public partial string PageTitle { get; set; } = "Clipboard";
 
     [ObservableProperty]
-    private string _pageDescription = "";
+    public partial string PageDescription { get; set; } = "";
 
     [ObservableProperty]
-    private string _copyStatus = "";
+    public partial string CopyStatus { get; set; } = "";
 
     [ObservableProperty]
-    private string _pastedText = "";
+    public partial string PastedText { get; set; } = "";
 
     [ObservableProperty]
-    private string _clearStatus = "";
+    public partial string ClearStatus { get; set; } = "";
 
     [ObservableProperty]
-    private string _formatsInfo = "";
+    public partial string FormatsInfo { get; set; } = "";
 
     [ObservableProperty]
-    private string _copyImageStatus = "";
+    public partial string CopyImageStatus { get; set; } = "";
 
     [ObservableProperty]
-    private string _pasteImageStatus = "";
+    public partial string PasteImageStatus { get; set; } = "";
 
     public ClipboardPageViewModel() { }
 }

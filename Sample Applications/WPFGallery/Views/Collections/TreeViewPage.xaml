@@ -9,49 +9,53 @@
     x:Class="WPFGallery.Views.TreeViewPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="clr-namespace:WPFGallery.Controls"
+    xmlns:controls="using:WPFGallery.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:WPFGallery.Views"
+    xmlns:local="using:WPFGallery.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="TreeViewPage"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
 
-    <Grid x:Name="ContentPagePane" Height="Auto">
+    <Grid x:Name="ContentPagePane">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <controls:PageHeader Margin="0,0,0,32" Title="{Binding ViewModel.PageTitle}" ShowDescription="False" />
+        <controls:PageHeader Margin="0,0,0,32" Title="{x:Bind ViewModel.PageTitle, Mode=OneWay}" ShowDescription="False" />
 
         <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
             <Grid Margin="0,0,0,24">
                 <controls:ControlExample
                     Margin="10"
                     HeaderText="Simple TreeView."
-                    XamlCode="&lt;TreeView AllowDrop=&quot;True&quot; ScrollViewer.CanContentScroll=&quot;False&quot;&gt;             &#10;&#9;&lt;TreeViewItem             &#10;&#9;&#9;Header=&quot;Work Documents&quot;             &#10;&#9;&#9;IsExpanded=&quot;True&quot;             &#10;&#9;&#9;IsSelected=&quot;True&quot;&gt;             &#10;&#9;&#9;&lt;TreeViewItem Header=&quot;Feature Schedule&quot; /&gt;             &#10;&#9;&#9;&lt;TreeViewItem Header=&quot;Overall Project Plan&quot; /&gt;             &#10;&#9;&lt;/TreeViewItem&gt;             &#10;&#9;&lt;TreeViewItem Header=&quot;Personal Documents&quot;&gt;             &#10;&#9;&#9;&lt;TreeViewItem Header=&quot;Contractor contact info&quot; /&gt;             &#10;&#9;&#9;&lt;TreeViewItem Header=&quot;Home Remodel&quot;&gt;             &#10;&#9;&#9;&#9;&lt;TreeViewItem Header=&quot;Paint Color Scheme&quot; /&gt;             &#10;&#9;&#9;&#9;&lt;TreeViewItem Header=&quot;Flooring Woodgrain Type&quot; /&gt;             &#10;&#9;&#9;&#9;&lt;TreeViewItem Header=&quot;Kitchen Cabinet Style&quot; /&gt;             &#10;&#9;&#9;&lt;/TreeViewItem&gt;             &#10;&#9;&lt;/TreeViewItem&gt;             &#10;&lt;/TreeView&gt;">
-                    <TreeView
+                    XamlCode="&lt;TreeView AutomationProperties.AutomationId=&quot;Sample TreeView&quot;&#10;    AllowDrop=&quot;True&quot;&#10;    CanDragItems=&quot;True&quot; CanReorderItems=&quot;True&quot;&#10;    AutomationProperties.Name=&quot;Sample TreeView&quot;&gt;&#10;    &lt;TreeView.RootNodes&gt;&#10;        &lt;TreeViewNode Content=&quot;Work Documents&quot; IsExpanded=&quot;True&quot;&gt;&#10;            &lt;TreeViewNode.Children&gt;&#10;                &lt;TreeViewNode Content=&quot;Feature Schedule&quot; /&gt;&#10;                &lt;TreeViewNode Content=&quot;Overall Project Plan&quot; /&gt;&#10;            &lt;/TreeViewNode.Children&gt;&#10;        &lt;/TreeViewNode&gt;&#10;        &lt;TreeViewNode Content=&quot;Personal Documents&quot;&gt;&#10;            &lt;TreeViewNode.Children&gt;&#10;                &lt;TreeViewNode Content=&quot;Contractor contact info&quot; /&gt;&#10;                &lt;TreeViewNode Content=&quot;Home Remodel&quot;&gt;&#10;                    &lt;TreeViewNode.Children&gt;&#10;                        &lt;TreeViewNode Content=&quot;Paint Color Scheme&quot; /&gt;&#10;                        &lt;TreeViewNode Content=&quot;Flooring Woodgrain Type&quot; /&gt;&#10;                        &lt;TreeViewNode Content=&quot;Kitchen Cabinet Style&quot; /&gt;&#10;                    &lt;/TreeViewNode.Children&gt;&#10;                &lt;/TreeViewNode&gt;&#10;            &lt;/TreeViewNode.Children&gt;&#10;        &lt;/TreeViewNode&gt;&#10;    &lt;/TreeView.RootNodes&gt;&#10;&lt;/TreeView&gt;">
+                    <TreeView AutomationProperties.AutomationId="Sample TreeView"
                         AllowDrop="True"
-                        AutomationProperties.Name="Sample TreeView"
-                        ScrollViewer.CanContentScroll="False">
-                        <TreeViewItem
-                            Header="Work Documents"
-                            IsExpanded="True"
-                            IsSelected="True">
-                            <TreeViewItem Header="Feature Schedule" />
-                            <TreeViewItem Header="Overall Project Plan" />
-                        </TreeViewItem>
-                        <TreeViewItem Header="Personal Documents">
-                            <TreeViewItem Header="Contractor contact info" />
-                            <TreeViewItem Header="Home Remodel">
-                                <TreeViewItem Header="Paint Color Scheme" />
-                                <TreeViewItem Header="Flooring Woodgrain Type" />
-                                <TreeViewItem Header="Kitchen Cabinet Style" />
-                            </TreeViewItem>
-                        </TreeViewItem>
+                        CanDragItems="True" CanReorderItems="True"
+                        AutomationProperties.Name="Sample TreeView">
+                        <TreeView.RootNodes>
+                            <TreeViewNode Content="Work Documents" IsExpanded="True">
+                                <TreeViewNode.Children>
+                                    <TreeViewNode Content="Feature Schedule" />
+                                    <TreeViewNode Content="Overall Project Plan" />
+                                </TreeViewNode.Children>
+                            </TreeViewNode>
+                            <TreeViewNode Content="Personal Documents">
+                                <TreeViewNode.Children>
+                                    <TreeViewNode Content="Contractor contact info" />
+                                    <TreeViewNode Content="Home Remodel">
+                                        <TreeViewNode.Children>
+                                            <TreeViewNode Content="Paint Color Scheme" />
+                                            <TreeViewNode Content="Flooring Woodgrain Type" />
+                                            <TreeViewNode Content="Kitchen Cabinet Style" />
+                                        </TreeViewNode.Children>
+                                    </TreeViewNode>
+                                </TreeViewNode.Children>
+                            </TreeViewNode>
+                        </TreeView.RootNodes>
                     </TreeView>
                 </controls:ControlExample>
             </Grid>

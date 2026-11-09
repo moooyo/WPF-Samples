@@ -7,13 +7,13 @@ namespace WPFGallery.ViewModels
     public partial class StatusAndInfoPageViewModel : ObservableObject
     {
         [ObservableProperty]
-        private string _pageTitle = "Status & Info";
+        public partial string PageTitle { get; set; } = "Status & Info";
 
         [ObservableProperty]
-        private string _pageDescription = "Controls to show progress and extra information";
+        public partial string PageDescription { get; set; } = "Controls to show progress and extra information";
 
         [ObservableProperty]
-        private ICollection<ControlInfoDataItem> _navigationCards = ControlsInfoDataSource.Instance.GetControlsInfo("Status & Info");
+        public partial ICollection<ControlInfoDataItem> NavigationCards { get; set; } = ControlsInfoDataSource.Instance.GetControlsInfo("Status & Info");
 
         private readonly INavigationService _navigationService;
 
@@ -23,13 +23,14 @@ namespace WPFGallery.ViewModels
         }
 
         [RelayCommand]
-        public void Navigate(object pageType){
+        public void Navigate(object pageType)
+        {
             if (pageType is Type page)
             {
                 _navigationService.NavigateTo(page);
             }
         }
 
-        
+
     }
 }

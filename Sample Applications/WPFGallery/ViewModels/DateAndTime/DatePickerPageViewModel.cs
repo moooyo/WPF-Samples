@@ -1,13 +1,13 @@
 
 namespace WPFGallery.ViewModels;
 
-public partial class DatePickerPageViewModel : ObservableObject 
+public partial class DatePickerPageViewModel : ObservableObject
 {
-	[ObservableProperty]
-	private string _pageTitle = "DatePicker";
+    [ObservableProperty]
+    public partial string PageTitle { get; set; } = "DatePicker";
 
-	[ObservableProperty]
-	private string _pageDescription = "";
+    [ObservableProperty]
+    public partial string PageDescription { get; set; } = "";
 
 
 }

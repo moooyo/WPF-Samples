@@ -1,21 +1,25 @@
-﻿using System.Windows.Automation.Peers;
-using System.Windows.Automation;
-using System.Windows.Documents;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace WPFGallery.Controls
 {
     /// <summary>
     /// Interaction logic for ColorTile.xaml
     /// </summary>
-    public partial class ColorTile : UserControl
+    public partial class ColorTile : Control
     {
-        static ColorTile()
+        public ColorTile()
         {
-            CommandManager.RegisterClassCommandBinding(typeof(ColorTile), new CommandBinding(ApplicationCommands.Copy, Copy_ColorBrushName));
+            DefaultStyleKey = typeof(ColorTile);
+            CopyCommand = new AsyncRelayCommand(CopyAsync);
         }
 
+        public IAsyncRelayCommand CopyCommand { get; }
+        public string CopyStatus
+        {
+            get => (string)GetValue(CopyStatusProperty);
+            set => SetValue(CopyStatusProperty, value);
+        }
+        public static readonly DependencyProperty CopyStatusProperty =
+            DependencyProperty.Register(nameof(CopyStatus), typeof(string), typeof(ColorTile), new PropertyMetadata(""));
         public CornerRadius TileRadius
         {
             get { return (CornerRadius)GetValue(TileRadiusProperty); }
@@ -78,29 +82,18 @@ namespace WPFGallery.Controls
         public static readonly DependencyProperty ShowWarningProperty =
             DependencyProperty.Register("ShowWarning", typeof(bool), typeof(ColorTile), new PropertyMetadata(false));
 
-        private static void Copy_ColorBrushName(object sender, RoutedEventArgs e)
+        private async Task CopyAsync()
         {
-            if(sender is ColorTile colorTile)
+            if (string.IsNullOrEmpty(ColorBrushName)) return;
+            try
             {
-                if(!string.IsNullOrEmpty(colorTile.ColorBrushName))
-                {
-                    try
-                    {
-                        Clipboard.SetText(colorTile.ColorBrushName);
-                        AutomationPeer peer = UIElementAutomationPeer.CreatePeerForElement((ColorTile)e.OriginalSource);
-                        peer.RaiseNotificationEvent(
-                           AutomationNotificationKind.Other,
-                            AutomationNotificationProcessing.ImportantMostRecent,
-                            "Color Brush Name Copied",
-                            "ButtonClickedActivity"
-                        );
-
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Error copying to clipboard: " + ex.Message);
-                    }
-                }
+                App.Services.GetRequiredService<Services.IClipboardService>().CopyText(ColorBrushName);
+                CopyStatus = "Color Brush Name Copied";
+            }
+            catch (Exception ex)
+            {
+                await App.Services.GetRequiredService<Services.IDialogService>().ShowAsync(XamlRoot,
+                    "Error copying to clipboard: " + ex.Message, "Clipboard error", image: Services.DialogImage.Error);
             }
         }
     }
